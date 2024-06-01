@@ -6,6 +6,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import static java.lang.String.format;
+
 public class EventListener implements Listener {
     private final Earthsmp plugin;
 
@@ -44,6 +46,7 @@ public class EventListener implements Listener {
 
         pos = pos.toBlockLocation();
 
-        plugin.getLogger().info(String.valueOf(plugin.borders.getColor(pos)));
+        Color color = plugin.borders.getColor(event.getInteractionPoint().toBlockLocation());
+        plugin.getLogger().info(format("R: %d, G: %d, B: %d, A: %d", color.r, color.g, color.b, color.a));
     }
 }
