@@ -1,5 +1,7 @@
 package dev.talwat.earthsmp;
 
+import static java.lang.String.format;
+
 public class Color {
     public int r;
     public int g;
@@ -12,14 +14,29 @@ public class Color {
         this.b = b;
         this.a = a;
     }
-    Color(int x) {
-        r = (x      ) & 0xFF;;
-        g = (x >>  8) & 0xFF;
-        b = (x >> 16) & 0xFF;
-        a = (x >> 24) & 0xFF;
+
+    Color(int rgb) {
+        a = (rgb >> 24) & 0xFF;
+        r = (rgb >> 16) & 0xFF;
+        g = (rgb >> 8) & 0xFF;
+        b = (rgb) & 0xFF;
     }
 
     public boolean transparent() {
-        return this.equals(new Color(0, 0, 0, 0));
+        return this.a == 0;
+    }
+
+    // TODO: wtf?
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Color color = (Color) o;
+        return r == color.r && g == color.g && b == color.b;
+    }
+
+    @Override
+    public String toString() {
+        return format("(%d/%d/%d/%d)", r, g, b, a);
     }
 }

@@ -46,7 +46,7 @@ public class EventListener implements Listener {
 
         pos = pos.toBlockLocation();
 
-        Color color = plugin.borders.getColor(event.getInteractionPoint().toBlockLocation());
+        Color color = plugin.borders.getColor(pos);
         plugin.getLogger().info(format("R: %d, G: %d, B: %d, A: %d", color.r, color.g, color.b, color.a));
     }
 }

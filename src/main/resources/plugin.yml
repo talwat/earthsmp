@@ -4,3 +4,5 @@ main: dev.talwat.earthsmp.Earthsmp
 api-version: 1.19
 authors: [ talwat ]
 description: Talwat's EarthSMP plugin
+depend:
+  - squaremap
