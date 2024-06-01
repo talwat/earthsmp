@@ -1,5 +1,6 @@
 package dev.talwat.earthsmp;
 
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -34,6 +35,15 @@ public class EventListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent event) {
         plugin.getLogger().info("Interaction!");
-        plugin.getLogger().info(String.valueOf(plugin.borders.getColor(event.getInteractionPoint().toBlockLocation())));
+
+        Location pos = event.getInteractionPoint();
+
+        if (pos == null) {
+            return;
+        }
+
+        pos = pos.toBlockLocation();
+
+        plugin.getLogger().info(String.valueOf(plugin.borders.getColor(pos)));
     }
 }

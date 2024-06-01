@@ -11,20 +11,6 @@ import java.util.logging.Level;
 import static java.lang.String.format;
 import static org.bukkit.Bukkit.getServer;
 
-class Color {
-    public int r;
-    public int g;
-    public int b;
-    public int a;
-
-    Color(int x) {
-        r = (x      ) & 0xFF;;
-        g = (x >>  8) & 0xFF;
-        b = (x >> 16) & 0xFF;
-        a = (x >> 24) & 0xFF;
-    }
-}
-
 public class BorderImage {
     private BufferedImage image;
 
@@ -45,11 +31,15 @@ public class BorderImage {
     }
 
     public BorderImage(Earthsmp plugin) {
+        File file = new File(plugin.getDataFolder().getPath(), "borders.png");
+
         try {
-            image = ImageIO.read(new File(plugin.getDataFolder().getPath(), "borders.png"));
+            image = ImageIO.read(file);
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Couldn't open the map image file", e);
         }
+
+        SquareTracing.GetBoundaries(image);
 
         plugin.getLogger().info(plugin.getConfig().getString("test"));
     }

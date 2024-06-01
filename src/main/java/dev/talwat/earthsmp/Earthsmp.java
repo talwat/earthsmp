@@ -7,12 +7,11 @@ public final class Earthsmp extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         borders = new BorderImage(this);
 
         getLogger().info("EarthSMP plugin loaded!");
         getServer().getPluginManager().registerEvents(new EventListener(this), this);
-
-        saveDefaultConfig();
     }
 
     @Override
