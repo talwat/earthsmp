@@ -6,6 +6,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.awt.*;
+
 import static java.lang.String.format;
 
 public class EventListener implements Listener {
@@ -47,6 +49,6 @@ public class EventListener implements Listener {
         pos = pos.toBlockLocation();
 
         Color color = plugin.borders.getColor(pos);
-        plugin.getLogger().info(format("R: %d, G: %d, B: %d, A: %d", color.r, color.g, color.b, color.a));
+        plugin.getLogger().info(format("%s", color.getRed(), color));
     }
 }

@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.lang.String.format;
-import static org.bukkit.Bukkit.getServer;
-
 public class Trace {
     public static HashMap<Color, ArrayList<List<Point>>> TraceShapes(BufferedImage image) {
         HashMap<Color, ArrayList<List<Point>>> shapes = new HashMap<>();
@@ -16,15 +13,13 @@ public class Trace {
             for (int j = image.getHeight()-1; j > 0; j--) {
                 Color pixel = new Color(image.getRGB(i, j));
 
-                if (pixel.transparent() || shapes.containsKey(pixel)) {
+                if (pixel.getAlpha() == 0 || shapes.containsKey(pixel)) {
                     continue;
                 }
 
                 List<Point> shape = Trace(new Point(i, j), pixel, image);
                 shapes.putIfAbsent(pixel, new ArrayList<>());
                 shapes.get(pixel).add(shape);
-
-                break main;
             }
         }
 
@@ -71,6 +66,10 @@ public class Trace {
         return orientation;
     }
 
+    private static boolean isWithinBounds(Point p, BufferedImage image) {
+        return p.x >= 0 && p.x < image.getWidth() && p.y >= 0 && p.y < image.getHeight();
+    }
+
     static List<Point> Trace(Point s, Color target, BufferedImage image) {
         ArrayList<Point> b = new ArrayList<>();
 
@@ -81,7 +80,6 @@ public class Trace {
         Point p = (Point) s.clone();
         p.x--;
 
-        getServer().getLogger().info(format("poop, %s vs %s", p, s));
         while (!p.equals(s)) {
             switch (orientation) {
                 case 0:
@@ -98,17 +96,14 @@ public class Trace {
                     break;
             }
 
-            if (new Color(image.getRGB(p.x, p.y)).equals(target)) {
+            if (isWithinBounds(p, image) && new Color(image.getRGB(p.x, p.y)).equals(target)) {
                 b.add((Point) p.clone());
                 orientation = TurnLeft(orientation);
             } else {
                 orientation = TurnRight(orientation);
             }
-
-            getServer().getLogger().info(format("Start %s, Dir: %d, Pixel: %s", s, orientation, p));
         }
 
-        getServer().getLogger().info(format("b: %s", b));
         return b;
     }
 }

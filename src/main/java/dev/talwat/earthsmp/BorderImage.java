@@ -3,10 +3,13 @@ package dev.talwat.earthsmp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.*;
+import xyz.jpenilla.squaremap.api.marker.MultiPolygon;
 import xyz.jpenilla.squaremap.api.marker.Polygon;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -63,32 +66,35 @@ public class BorderImage {
         for (Map.Entry<Color, ArrayList<List<java.awt.Point>>> nation : boundaries.entrySet()) {
             for (List<java.awt.Point> shape : nation.getValue()) {
                 ArrayList<Point> filtered = new ArrayList();
+                ArrayList<MultiPolygon.MultiPolygonPart> points = new ArrayList();
 
                 for (int i = 0; i < shape.size(); i++) {
                     // TODO: Adjust for image offset, like in Events
-                    Point p = Point.of(shape.get(i).x * 16, shape.get(i).y * 16);
+                    Point p = imageToMap(shape.get(i));
 
-                    if (i >= 1) {
-                        // TODO: Invert this because it should show control accurately
-                        if (shape.get(i - 1).y == shape.get(i).y && shape.get(i + 1).x == shape.get(i).x) {
+                    if (i >= 1 && i < shape.size() - 1) {
+                        if (shape.get(i).y == shape.get(i - 1).y && shape.get(i).x == shape.get(i + 1).x) {
                             continue;
                         }
                     }
 
-                    plugin.getLogger().info(format("%f, %f", p.x(), p.z()));
-
                     filtered.add(p);
                 }
 
+                plugin.getLogger().info(format("%s", nation.getKey()));
+
                 Polygon marker = Polygon.polygon(filtered);
+                marker.markerOptions(marker.markerOptions().asBuilder().fillColor(nation.getKey()));
                 provider.addMarker(key, marker);
             }
+
+            plugin.getLogger().info(format("%s", provider.getMarkers()));
         }
 
         plugin.getLogger().info(plugin.getConfig().getString("test"));
     }
 
-    public Color getColor(Location pos) {
+    public java.awt.Point mapToImage(Location pos) {
         int x = Math.floorDiv(pos.getBlockX(), 16);
         int z = Math.floorDiv(pos.getBlockZ(), 16);
 
@@ -98,7 +104,31 @@ public class BorderImage {
         int imgX = x + width / 2;
         int imgY = z + height / 2;
 
-        return new Color(image.getRGB(imgX, imgY));
+        return new java.awt.Point(imgX, imgY);
+    }
+
+    public Point imageToMap(java.awt.Point pos) {
+        int height = image.getHeight();
+        int width = image.getWidth();
+
+        int x = (pos.x - width / 2) * 16;
+        int z = (pos.y - height / 2) * 16;
+
+        return Point.of(x, z);
+    }
+
+    private static Color convertToColor(int rgb) {
+        int a = (rgb >> 24) & 0xFF;
+        int r = (rgb >> 16) & 0xFF;
+        int g = (rgb >> 8) & 0xFF;
+        int b = (rgb) & 0xFF;
+
+        return new Color(r, g, b, a);
+    }
+
+    public Color getColor(Location pos) {
+        java.awt.Point mapToImage = mapToImage(pos);
+        return convertToColor(image.getRGB(mapToImage.x, mapToImage.y));
     }
 }
 
