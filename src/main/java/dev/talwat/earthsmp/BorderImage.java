@@ -32,11 +32,11 @@ public class BorderImage {
             plugin.getLogger().log(Level.SEVERE, "Couldn't open the map image file", e);
         }
 
-        HashMap<Color, ArrayList<List<java.awt.Point>>> boundaries = Shapes.TraceShapes(image);
-
+        HashMap<Color, List<List<java.awt.Point>>> boundaries = Shapes.TraceShapes(image);
         plugin.getLogger().info("Done Tracing!");
 
         Squaremap api = SquaremapProvider.get();
+
         World world = Bukkit.getWorld("world");
         if (world == null) {
             return;
@@ -47,8 +47,13 @@ public class BorderImage {
             return;
         }
 
+        Key key = Key.key("borders");
+
+        if (mapWorld.layerRegistry().hasEntry(key)) {
+            mapWorld.layerRegistry().unregister(key);
+        }
+
         // TODO: Add labels and shit
-        Key key = Key.of("borders");
         SimpleLayerProvider layerProvider = SimpleLayerProvider.builder("Borders")
                 .showControls(true)
                 .defaultHidden(false)
@@ -58,9 +63,10 @@ public class BorderImage {
 
         mapWorld.layerRegistry().register(key, layerProvider);
 
-        // TODO: These types be nasty AF
+        layerProvider.clearMarkers();
+
         int i = 0;
-        for (Map.Entry<Color, ArrayList<List<java.awt.Point>>> nation : boundaries.entrySet()) {
+        for (Map.Entry<Color, List<List<java.awt.Point>>> nation : boundaries.entrySet()) {
             for (List<java.awt.Point> shape : nation.getValue()) {
                 ArrayList<Point> filtered = new ArrayList<>();
 
@@ -69,16 +75,14 @@ public class BorderImage {
                     filtered.add(p);
                 }
 
-                plugin.getLogger().info(format("%s", nation.getKey()));
+                plugin.getLogger().info(format("Found shape with color %s", nation.getKey()));
 
                 Polygon marker = Polygon.polygon(filtered);
                 marker.markerOptions(marker.markerOptions().asBuilder().fillColor(nation.getKey()).strokeColor(nation.getKey().brighter()));
-                layerProvider.addMarker(Key.key(String.valueOf(i)), marker);
+                layerProvider.addMarker(Key.key(format("borders_%s", i)), marker);
 
                 i++;
             }
-
-            plugin.getLogger().info(format("%s", layerProvider.getMarkers()));
         }
 
         plugin.getLogger().info(plugin.getConfig().getString("test"));

@@ -60,13 +60,14 @@ class ContourTracing {
 }
 
 public class Shapes {
-    public static HashMap<Color, ArrayList<List<Point>>> TraceShapes(BufferedImage image) {
-        HashMap<Color, ArrayList<List<Point>>> shapes = new HashMap<>();
+    public static HashMap<Color, List<List<Point>>> TraceShapes(BufferedImage image) {
+        HashMap<Color, List<List<Point>>> shapes = new HashMap<>();
         for (int i = 0; i < image.getWidth(); i++) {
             for (int j = image.getHeight()-1; j > 0; j--) {
                 Color pixel = new Color(image.getRGB(i, j));
 
-                if (pixel.getAlpha() == 0 || shapes.containsKey(pixel)) {
+                // Grayscale is treated as a "comment"
+                if (pixel.getAlpha() == 0 || shapes.containsKey(pixel) || (pixel.getRed() == pixel.getGreen() && pixel.getGreen() == pixel.getBlue())) {
                     continue;
                 }
 
