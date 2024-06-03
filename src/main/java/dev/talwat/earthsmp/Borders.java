@@ -3,6 +3,7 @@ package dev.talwat.earthsmp;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.*;
 import xyz.jpenilla.squaremap.api.marker.Polygon;
@@ -12,18 +13,95 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
+import static dev.talwat.earthsmp.ParseUtils.getUUIDs;
 import static java.lang.String.format;
 
-public class BorderImage {
-    private BufferedImage image;
+class ParseUtils {
+    static UUID[] getUUIDs(String[] args) {
+        UUID[] uuids = (UUID[]) Arrays.stream(args).map(UUID::fromString).toArray();
+        return uuids;
+    }
+}
 
-    public BorderImage(Earthsmp plugin) {
+class Territory {
+    public String tag;
+    public String name;
+    public UUID[] members;
+    public int saturation;
+    public boolean colony;
+
+    public Territory(String tag, String name, int saturation, UUID[] members, boolean colony) {
+        this.tag = tag;
+        this.name = name;
+        this.members = members;
+        this.saturation = saturation;
+        this.colony = colony;
+    }
+
+    public static Territory deserialize(Map<String, Object> args) {
+        return new Territory(
+                (String) args.get("tag"),
+                (String) args.get("name"),
+                (int) args.get("saturation"),
+                getUUIDs((String[])args.get("members")),
+                (boolean) args.get("colony")
+        );
+    }
+}
+
+class Nation {
+    public String tag;
+    public String name;
+    public String nick;
+    public int hue;
+    public UUID[] members;
+    public Territory[] territories;
+
+    public Nation(String tag, String name, String nick, int hue, UUID[] members, Territory[] territories) {
+        this.tag = tag;
+        this.name = name;
+        this.nick = nick;
+        this.hue = hue;
+        this.members = members;
+        this.territories = territories;
+    }
+
+    public static Nation deserialize(Map<String, Object> args) {
+        String[] rawUuids = (String[]) args.get("members");
+        UUID[] uuids = (UUID[]) Arrays.stream(rawUuids).map(UUID::fromString).toArray();
+
+        List<Map<String, Object>> rawTerritories = (List<Map<String, Object>>) args.get("territories");
+        Territory[] territories = (Territory[]) rawTerritories.stream().map(Territory::deserialize).toArray();
+        return new Nation(
+                (String) args.get("tag"),
+                (String) args.get("name"),
+                (String) args.get("nick"),
+                (int) args.get("color"),
+                uuids,
+                territories
+        );
+    }
+}
+
+public class Borders {
+    private BufferedImage image;
+    private final Earthsmp plugin;
+    private Nation[] nations;
+
+    private Nation[] loadNations() {
+        File file = new File(plugin.getDataFolder(), "nations.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        return (Nation[]) config.getMapList(".").stream().map(x -> {
+            return Nation.deserialize((Map<String, Object>) x);
+        }).toArray();
+    }
+
+    private BufferedImage loadImage() {
         File file = new File(plugin.getDataFolder().getPath(), "borders.png");
 
         try {
@@ -32,19 +110,20 @@ public class BorderImage {
             plugin.getLogger().log(Level.SEVERE, "Couldn't open the map image file", e);
         }
 
-        HashMap<Color, List<List<java.awt.Point>>> boundaries = Shapes.TraceShapes(image);
-        plugin.getLogger().info("Done Tracing!");
+        return image;
+    }
 
+    private SimpleLayerProvider setupLayerProvider() {
         Squaremap api = SquaremapProvider.get();
 
         World world = Bukkit.getWorld("world");
         if (world == null) {
-            return;
+            return null;
         }
         WorldIdentifier identifier = BukkitAdapter.worldIdentifier(world);
         MapWorld mapWorld = api.getWorldIfEnabled(identifier).orElse(null);
         if (mapWorld == null) {
-            return;
+            return null;
         }
 
         Key key = Key.key("borders");
@@ -64,6 +143,21 @@ public class BorderImage {
         mapWorld.layerRegistry().register(key, layerProvider);
 
         layerProvider.clearMarkers();
+
+        return layerProvider;
+    }
+
+    public Borders(Earthsmp plugin) {
+        this.plugin = plugin;
+        this.image = loadImage();
+
+        HashMap<Color, List<List<java.awt.Point>>> boundaries = Shapes.TraceShapes(image);
+        plugin.getLogger().info("Done Tracing!");
+
+        SimpleLayerProvider layerProvider = setupLayerProvider();
+        if (layerProvider == null) {
+            return;
+        }
 
         int i = 0;
         for (Map.Entry<Color, List<List<java.awt.Point>>> nation : boundaries.entrySet()) {

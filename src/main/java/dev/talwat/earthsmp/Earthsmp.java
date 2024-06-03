@@ -1,18 +1,18 @@
 package dev.talwat.earthsmp;
 
 import dev.talwat.earthsmp.commands.Handler;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
 public final class Earthsmp extends JavaPlugin {
-    public BorderImage borders;
+    public Borders borders;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        borders = new BorderImage(this);
+        saveResource("nations.yml", false);
+        borders = new Borders(this);
 
         getLogger().info("EarthSMP plugin loaded!");
         getServer().getPluginManager().registerEvents(new EventListener(this), this);

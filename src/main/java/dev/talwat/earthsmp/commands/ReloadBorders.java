@@ -1,9 +1,8 @@
 package dev.talwat.earthsmp.commands;
 
-import dev.talwat.earthsmp.BorderImage;
+import dev.talwat.earthsmp.Borders;
 import dev.talwat.earthsmp.Earthsmp;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +20,7 @@ class ReloadBorders extends SubCommand {
         }
 
         sender.sendPlainMessage("Reloading borders...");
-        plugin.borders = new BorderImage(plugin);
+        plugin.borders = new Borders(plugin);
         sender.sendPlainMessage("Done!");
 
         return true;

@@ -1,0 +1,30 @@
+# Example country
+# Each country should have some kind of 3 letter tag, similar to HOI4
+  - tag: usa
+    # (Required) The full, official name of the country
+    name: United States of America
+    # (Required) A shorter, unofficial name used in casual discussion or on maps
+    nick: United States
+    # (Required) An HSL hue from 0-360 that is used on the map
+    # This is done to distinguish between different territories of the same nation
+    color: 0
+    # (Required) A list of people who have permissions in the whole nation, in UUID's
+    # If you'd like, you can exclude all but leaders, and then give specific permissions in the territories
+    members:
+      - 88deebb7-e473-45ad-b51d-45b7f42ee5b1
+      - a6d32a31-3507-4606-a165-215dab060651
+      - 1fc3f829-3c29-4545-a7a4-ab83dfc9b753
+    # (Optional) Any special territories/colonies that should have custom names
+    territories:
+      # Territory tag, this doesn't have to be unique globally, just in a country
+        - tag: hwi
+          # (Required) The only name, there is no official name for territories
+          name: Hawaii
+          # (Required) An HSL saturation ranging from 0-100
+          # This is only used internally in the map image, although that is subject to change
+          color: 80
+          # (Required) A list of people who have permissions in the territory, in UUID's
+          members:
+            - 88deebb7-e473-45ad-b51d-45b7f42ee5b1
+          # (Required) Up to the nation to decide what counts as a colony and what doesn't
+          colony: false
