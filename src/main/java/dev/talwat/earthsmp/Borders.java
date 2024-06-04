@@ -13,17 +13,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import static dev.talwat.earthsmp.ParseUtils.getUUIDs;
 import static java.lang.String.format;
+import static org.bukkit.Bukkit.getOfflinePlayer;
+import static org.bukkit.Bukkit.getServer;
 
 class ParseUtils {
-    static UUID[] getUUIDs(String[] args) {
-        UUID[] uuids = (UUID[]) Arrays.stream(args).map(UUID::fromString).toArray();
-        return uuids;
+    static UUID[] getUUIDs(List<String> args) {
+        return args.stream().map(UUID::fromString).toArray(UUID[]::new);
     }
 }
 
@@ -46,8 +47,8 @@ class Territory {
         return new Territory(
                 (String) args.get("tag"),
                 (String) args.get("name"),
-                (int) args.get("saturation"),
-                getUUIDs((String[])args.get("members")),
+                (int) args.get("color"),
+                getUUIDs((List<String>) args.get("members")),
                 (boolean) args.get("colony")
         );
     }
@@ -59,9 +60,9 @@ class Nation {
     public String nick;
     public int hue;
     public UUID[] members;
-    public Territory[] territories;
+    public Map<Integer, Territory> territories;
 
-    public Nation(String tag, String name, String nick, int hue, UUID[] members, Territory[] territories) {
+    public Nation(String tag, String name, String nick, int hue, UUID[] members, Map<Integer, Territory> territories) {
         this.tag = tag;
         this.name = name;
         this.nick = nick;
@@ -71,11 +72,19 @@ class Nation {
     }
 
     public static Nation deserialize(Map<String, Object> args) {
-        String[] rawUuids = (String[]) args.get("members");
-        UUID[] uuids = (UUID[]) Arrays.stream(rawUuids).map(UUID::fromString).toArray();
+        getServer().getLogger().info(format("%s", args.get("members")));
+        UUID[] uuids = getUUIDs((List<String>) args.get("members"));
 
-        List<Map<String, Object>> rawTerritories = (List<Map<String, Object>>) args.get("territories");
-        Territory[] territories = (Territory[]) rawTerritories.stream().map(Territory::deserialize).toArray();
+        Map<Integer, Territory> territories = new HashMap<>();
+        Object rawTerritories = args.get("territories");
+
+        if (rawTerritories != null) {
+            for (Map<String, Object> raw : (List<Map<String, Object>>) rawTerritories) {
+                Territory territory = Territory.deserialize(raw);
+                territories.put(territory.saturation, territory);
+            }
+        }
+
         return new Nation(
                 (String) args.get("tag"),
                 (String) args.get("name"),
@@ -88,17 +97,113 @@ class Nation {
 }
 
 public class Borders {
-    private BufferedImage image;
     private final Earthsmp plugin;
-    private Nation[] nations;
+    // The key is also the `hue` value.
+    private final Map<Integer, Nation> nations;
+    private BufferedImage image;
 
-    private Nation[] loadNations() {
+    public Borders(Earthsmp plugin) {
+        this.plugin = plugin;
+        this.image = loadImage();
+        this.nations = loadNations();
+
+        HashMap<Color, List<java.awt.Point>> boundaries = Shapes.TraceShapes(image);
+        plugin.getLogger().info("Done Tracing!");
+
+        SimpleLayerProvider layerProvider = setupLayerProvider();
+        if (layerProvider == null) {
+            return;
+        }
+
+        int i = 0;
+        for (Map.Entry<Color, List<java.awt.Point>> entry : boundaries.entrySet()) {
+            List<java.awt.Point> shape = entry.getValue();
+            Color color = entry.getKey();
+            float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+            ArrayList<Point> filtered = new ArrayList<>();
+
+            for (java.awt.Point point : shape) {
+                Point p = imageToMap(point);
+                filtered.add(p);
+            }
+
+            plugin.getLogger().info(format("Found shape with color %s", color));
+
+            plugin.getLogger().info(format("HSB: %f, %f, %f", hsb[0], hsb[1], hsb[2]));
+            plugin.getLogger().info(format("HSB: %f, %f, %f", hsb[0] * 360, hsb[1] * 100, hsb[2] * 100));
+            plugin.getLogger().info(format("Nations: %s", nations));
+
+            Nation nation = nations.get(Math.round(hsb[0] * 360));
+
+            Polygon marker = Polygon.polygon(filtered);
+            marker.markerOptions(
+                    marker.markerOptions()
+                            .asBuilder()
+                            .fillColor(color)
+                            .strokeColor(color.brighter())
+                            .clickTooltip(getLabel(nation, hsb))
+            );
+            layerProvider.addMarker(Key.key(format("borders_%s", i)), marker);
+
+            i++;
+        }
+
+        plugin.getLogger().info(plugin.getConfig().getString("test"));
+    }
+
+    private static Color convertToColor(int rgb) {
+        int a = (rgb >> 24) & 0xFF;
+        int r = (rgb >> 16) & 0xFF;
+        int g = (rgb >> 8) & 0xFF;
+        int b = (rgb) & 0xFF;
+
+        return new Color(r, g, b, a);
+    }
+
+    private Map<Integer, Nation> loadNations() {
         File file = new File(plugin.getDataFolder(), "nations.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        return (Nation[]) config.getMapList(".").stream().map(x -> {
-            return Nation.deserialize((Map<String, Object>) x);
-        }).toArray();
+        Map<Integer, Nation> nations = new HashMap<>();
+        for (Map<?, ?> raw : config.getMapList("nations")) {
+            Nation nation = Nation.deserialize((Map<String, Object>) raw);
+            nations.put(nation.hue, nation);
+        }
+
+        return nations;
+    }
+
+    private String getLabel(Nation nation, float[] hsb) {
+        StringBuilder label = new StringBuilder();
+
+        Territory territory = nation.territories.get(Math.round(hsb[1] * 100));
+        plugin.getLogger().info(format("%s", territory));
+
+        if (territory != null) {
+            label.append(format("<h2>%s <i>(%s)</i></h2>", territory.name, nation.nick));
+
+            if (territory.colony) {
+                label.append("<b>Inhabitants</b><br>");
+                label.append("<ul>");
+                for (UUID user : territory.members) {
+                    label.append(format("<li>* %s</li><br>", getOfflinePlayer(user).getName()));
+                }
+                label.append("</ul>");
+            }
+        } else {
+            label.append(format("<h2>%s</h2>", nation.nick));
+        }
+
+        if (territory == null || !territory.colony) {
+            label.append("<b>Members</b><br>");
+            label.append("<ul>");
+            for (UUID user : nation.members) {
+                label.append(format("<li>* %s</li><br>", getOfflinePlayer(user).getName()));
+            }
+            label.append("</ul>");
+        }
+
+        return label.toString();
     }
 
     private BufferedImage loadImage() {
@@ -147,41 +252,6 @@ public class Borders {
         return layerProvider;
     }
 
-    public Borders(Earthsmp plugin) {
-        this.plugin = plugin;
-        this.image = loadImage();
-
-        HashMap<Color, List<List<java.awt.Point>>> boundaries = Shapes.TraceShapes(image);
-        plugin.getLogger().info("Done Tracing!");
-
-        SimpleLayerProvider layerProvider = setupLayerProvider();
-        if (layerProvider == null) {
-            return;
-        }
-
-        int i = 0;
-        for (Map.Entry<Color, List<List<java.awt.Point>>> nation : boundaries.entrySet()) {
-            for (List<java.awt.Point> shape : nation.getValue()) {
-                ArrayList<Point> filtered = new ArrayList<>();
-
-                for (java.awt.Point point : shape) {
-                    Point p = imageToMap(point);
-                    filtered.add(p);
-                }
-
-                plugin.getLogger().info(format("Found shape with color %s", nation.getKey()));
-
-                Polygon marker = Polygon.polygon(filtered);
-                marker.markerOptions(marker.markerOptions().asBuilder().fillColor(nation.getKey()).strokeColor(nation.getKey().brighter()));
-                layerProvider.addMarker(Key.key(format("borders_%s", i)), marker);
-
-                i++;
-            }
-        }
-
-        plugin.getLogger().info(plugin.getConfig().getString("test"));
-    }
-
     public java.awt.Point mapToImage(Location pos) {
         int x = Math.floorDiv(pos.getBlockX(), 16);
         int z = Math.floorDiv(pos.getBlockZ(), 16);
@@ -203,15 +273,6 @@ public class Borders {
         int z = (pos.y - height / 2) * 16;
 
         return Point.of(x, z);
-    }
-
-    private static Color convertToColor(int rgb) {
-        int a = (rgb >> 24) & 0xFF;
-        int r = (rgb >> 16) & 0xFF;
-        int g = (rgb >> 8) & 0xFF;
-        int b = (rgb) & 0xFF;
-
-        return new Color(r, g, b, a);
     }
 
     public Color getColor(Location pos) {

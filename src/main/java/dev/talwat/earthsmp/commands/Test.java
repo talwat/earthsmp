@@ -2,7 +2,6 @@ package dev.talwat.earthsmp.commands;
 
 import dev.talwat.earthsmp.Earthsmp;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

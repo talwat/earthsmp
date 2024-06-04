@@ -28,6 +28,18 @@ class ContourTracing {
         return new Point(p.x + DIRECTIONS[orientation][0], p.y + DIRECTIONS[orientation][1]);
     }
 
+    private static boolean isBlack(BufferedImage image, Point p, Color target, boolean isNeighbor) {
+//        if (!isNeighbor) {
+//            for (int[] direction : DIRECTIONS) {
+//                if (isBlack(image, new Point(p.x + direction[0], p.y + direction[1]), target, true)) {
+//                    return true;
+//                }
+//            }
+//        }
+
+        return isWithinBounds(p, image) && new Color(image.getRGB(p.x, p.y)).equals(target);
+    }
+
     public static List<Point> trace(Point start, Color target, BufferedImage image) {
         List<Point> boundary = new ArrayList<>();
         Point current = new Point(start);
@@ -40,7 +52,7 @@ class ContourTracing {
             // Try to find the next boundary pixel
             for (int i = 0; i < 4; i++) {
                 Point next = getNextPoint(current, orientation);
-                if (isWithinBounds(next, image) && new Color(image.getRGB(next.x, next.y)).equals(target)) {
+                if (isBlack(image, next, target, false)) {
                     current = next;
                     orientation = turnLeft(orientation); // Turn left after finding the target
                     foundNext = true;
@@ -60,10 +72,10 @@ class ContourTracing {
 }
 
 public class Shapes {
-    public static HashMap<Color, List<List<Point>>> TraceShapes(BufferedImage image) {
-        HashMap<Color, List<List<Point>>> shapes = new HashMap<>();
+    public static HashMap<Color, List<Point>> TraceShapes(BufferedImage image) {
+        HashMap<Color, List<Point>> shapes = new HashMap<>();
         for (int i = 0; i < image.getWidth(); i++) {
-            for (int j = image.getHeight()-1; j > 0; j--) {
+            for (int j = image.getHeight() - 1; j > 0; j--) {
                 Color pixel = new Color(image.getRGB(i, j));
 
                 // Grayscale is treated as a "comment"
@@ -72,8 +84,7 @@ public class Shapes {
                 }
 
                 List<Point> shape = trace(new Point(i, j), pixel, image);
-                shapes.putIfAbsent(pixel, new ArrayList<>());
-                shapes.get(pixel).add(shape);
+                shapes.put(pixel, shape);
             }
         }
 
