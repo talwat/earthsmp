@@ -1,5 +1,7 @@
 package dev.talwat.earthsmp;
 
+import dev.talwat.earthsmp.config.Nation;
+import dev.talwat.earthsmp.config.Territory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,90 +19,8 @@ import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
-import static dev.talwat.earthsmp.ParseUtils.getUUIDs;
 import static java.lang.String.format;
 import static org.bukkit.Bukkit.getOfflinePlayer;
-import static org.bukkit.Bukkit.getServer;
-
-class ParseUtils {
-    static UUID[] getUUIDs(List<String> args) {
-        return args.stream().map(UUID::fromString).toArray(UUID[]::new);
-    }
-}
-
-class Territory {
-    public String tag;
-    public String name;
-    public int saturation;
-    public UUID ruler;
-    public UUID[] members;
-    public boolean colony;
-
-    public Territory(String tag, String name, int saturation, UUID ruler, UUID[] members, boolean colony) {
-        this.tag = tag;
-        this.name = name;
-        this.saturation = saturation;
-        this.ruler = ruler;
-        this.members = members;
-        this.colony = colony;
-    }
-
-    public static Territory deserialize(Map<String, Object> args) {
-        return new Territory(
-                (String) args.get("tag"),
-                (String) args.get("name"),
-                (int) args.get("color"),
-                UUID.fromString((String) args.get("ruler")),
-                getUUIDs((List<String>) args.get("members")),
-                (boolean) args.get("colony")
-        );
-    }
-}
-
-class Nation {
-    public String tag;
-    public String name;
-    public String nick;
-    public int hue;
-    public UUID ruler;
-    public UUID[] members;
-    public Map<Integer, Territory> territories;
-
-    public Nation(String tag, String name, String nick, int hue, UUID ruler, UUID[] members, Map<Integer, Territory> territories) {
-        this.tag = tag;
-        this.name = name;
-        this.nick = nick;
-        this.hue = hue;
-        this.ruler = ruler;
-        this.members = members;
-        this.territories = territories;
-    }
-
-    public static Nation deserialize(Map<String, Object> args) {
-        getServer().getLogger().info(format("%s", args.get("members")));
-        UUID[] uuids = getUUIDs((List<String>) args.get("members"));
-
-        Map<Integer, Territory> territories = new HashMap<>();
-        Object rawTerritories = args.get("territories");
-
-        if (rawTerritories != null) {
-            for (Map<String, Object> raw : (List<Map<String, Object>>) rawTerritories) {
-                Territory territory = Territory.deserialize(raw);
-                territories.put(territory.saturation, territory);
-            }
-        }
-
-        return new Nation(
-                (String) args.get("tag"),
-                (String) args.get("name"),
-                (String) args.get("nick"),
-                (int) args.get("color"),
-                UUID.fromString((String) args.get("ruler")),
-                uuids,
-                territories
-        );
-    }
-}
 
 public class Borders {
     private final Earthsmp plugin;

@@ -29,6 +29,7 @@ public final class Handler implements CommandExecutor {
 
         return switch (args[0]) {
             case "test" -> new Test(plugin);
+            case "member", "members" -> new Member(plugin);
             default -> null;
         };
 

@@ -1,23 +1,30 @@
 package dev.talwat.earthsmp.commands;
 
 import dev.talwat.earthsmp.Earthsmp;
+import dev.talwat.earthsmp.config.NationsConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import static java.lang.String.format;
 
 class Config extends SubCommand {
+    public Config(Earthsmp plugin) {
+        super(plugin);
+    }
+
     private boolean nation(@NotNull CommandSender sender, @NotNull String[] args) {
-        File file = new File(plugin.getDataFolder(), "nations.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        List<Map<String, Object>> nations = (List<Map<String, Object>>) config.getList("nations");
+        NationsConfig nationsConfig = NationsConfig.Load(plugin);
+        List<Map<String, Object>> nations = nationsConfig.parsed;
+
         if (nations == null) {
             return true;
         }
@@ -29,7 +36,9 @@ class Config extends SubCommand {
                 nation.put("name", args[4].replace("_", " "));
                 nation.put("nick", args[5].replace("_", " "));
                 nation.put("color", Integer.valueOf(args[6]));
-                nation.put("ruler", UUID.fromString(args[7]));
+
+                UUID ruler = Bukkit.getOfflinePlayer(args[7]).getUniqueId();
+                nation.put("ruler", ruler.toString());
                 nation.put("members", new String[0]);
 
                 nations.add(nation);
@@ -37,16 +46,12 @@ class Config extends SubCommand {
 
                 break;
             case "remove", "delete":
-                int i = 0;
-
-                for (; i < nations.size(); i++) {
-                    String tag = (String) nations.get(i).get("tag");
-
-                    if (Objects.equals(tag, args[3])) {
-                        nations.remove(i);
-                        sender.sendPlainMessage(format("Removed %s!", tag));
-                        break;
-                    }
+                int index = nationsConfig.findNationByTag(args[3]);
+                if (index == -1) {
+                    sender.sendPlainMessage(format("%s not found!", args[3]));
+                } else {
+                    nations.remove(index);
+                    sender.sendPlainMessage(format("Deleted %s!", args[3]));
                 }
 
                 break;
@@ -55,16 +60,12 @@ class Config extends SubCommand {
         }
 
         try {
-            config.save(file);
+            nationsConfig.Save();
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Couldn't save the config file", e);
         }
 
         return true;
-    }
-
-    public Config(Earthsmp plugin) {
-        super(plugin);
     }
 
     @Override
@@ -74,7 +75,7 @@ class Config extends SubCommand {
         }
 
         return switch (args[1]) {
-            case "nation" -> nation(sender, args);
+            case "nation", "nations" -> nation(sender, args);
             default -> true;
         };
 
