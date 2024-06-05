@@ -31,15 +31,17 @@ class ParseUtils {
 class Territory {
     public String tag;
     public String name;
-    public UUID[] members;
     public int saturation;
+    public UUID ruler;
+    public UUID[] members;
     public boolean colony;
 
-    public Territory(String tag, String name, int saturation, UUID[] members, boolean colony) {
+    public Territory(String tag, String name, int saturation, UUID ruler, UUID[] members, boolean colony) {
         this.tag = tag;
         this.name = name;
-        this.members = members;
         this.saturation = saturation;
+        this.ruler = ruler;
+        this.members = members;
         this.colony = colony;
     }
 
@@ -48,6 +50,7 @@ class Territory {
                 (String) args.get("tag"),
                 (String) args.get("name"),
                 (int) args.get("color"),
+                UUID.fromString((String) args.get("ruler")),
                 getUUIDs((List<String>) args.get("members")),
                 (boolean) args.get("colony")
         );
@@ -59,14 +62,16 @@ class Nation {
     public String name;
     public String nick;
     public int hue;
+    public UUID ruler;
     public UUID[] members;
     public Map<Integer, Territory> territories;
 
-    public Nation(String tag, String name, String nick, int hue, UUID[] members, Map<Integer, Territory> territories) {
+    public Nation(String tag, String name, String nick, int hue, UUID ruler, UUID[] members, Map<Integer, Territory> territories) {
         this.tag = tag;
         this.name = name;
         this.nick = nick;
         this.hue = hue;
+        this.ruler = ruler;
         this.members = members;
         this.territories = territories;
     }
@@ -90,6 +95,7 @@ class Nation {
                 (String) args.get("name"),
                 (String) args.get("nick"),
                 (int) args.get("color"),
+                UUID.fromString((String) args.get("ruler")),
                 uuids,
                 territories
         );
@@ -134,6 +140,10 @@ public class Borders {
             plugin.getLogger().info(format("Nations: %s", nations));
 
             Nation nation = nations.get(Math.round(hsb[0] * 360));
+
+            if (nation == null) {
+                continue;
+            }
 
             Polygon marker = Polygon.polygon(filtered);
             marker.markerOptions(
@@ -186,7 +196,11 @@ public class Borders {
                 label.append("<b>Inhabitants</b><br>");
                 label.append("<ul>");
                 for (UUID user : territory.members) {
-                    label.append(format("<li>* %s</li><br>", getOfflinePlayer(user).getName()));
+                    if (user == territory.ruler) {
+                        label.append(format("<li><b>* %s</b></li><br>", getOfflinePlayer(user).getName()));
+                    } else {
+                        label.append(format("<li>* %s</li><br>", getOfflinePlayer(user).getName()));
+                    }
                 }
                 label.append("</ul>");
             }
@@ -198,7 +212,13 @@ public class Borders {
             label.append("<b>Members</b><br>");
             label.append("<ul>");
             for (UUID user : nation.members) {
-                label.append(format("<li>* %s</li><br>", getOfflinePlayer(user).getName()));
+                String username = getOfflinePlayer(user).getName();
+                plugin.getLogger().info(format("%s ?= %s", user, nation.ruler));
+                if (user.equals(nation.ruler)) {
+                    label.append(format("<li><b>* %s</b></li><br>", username));
+                } else {
+                    label.append(format("<li>* %s</li><br>", username));
+                }
             }
             label.append("</ul>");
         }

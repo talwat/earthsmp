@@ -22,15 +22,16 @@ public final class Handler implements CommandExecutor {
             switch (args[0]) {
                 case "reloadborders":
                     return new ReloadBorders(plugin);
+                case "config":
+                    return new Config(plugin);
             }
         }
 
-        switch (args[0]) {
-            case "test":
-                return new Test(plugin);
-        }
+        return switch (args[0]) {
+            case "test" -> new Test(plugin);
+            default -> null;
+        };
 
-        return null;
     }
 
     @Override
