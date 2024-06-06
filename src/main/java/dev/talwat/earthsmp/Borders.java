@@ -1,11 +1,11 @@
 package dev.talwat.earthsmp;
 
 import dev.talwat.earthsmp.config.Nation;
+import dev.talwat.earthsmp.config.NationsConfig;
 import dev.talwat.earthsmp.config.Territory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.*;
 import xyz.jpenilla.squaremap.api.marker.Polygon;
@@ -25,13 +25,13 @@ import static org.bukkit.Bukkit.getOfflinePlayer;
 public class Borders {
     private final Earthsmp plugin;
     // The key is also the `hue` value.
-    private final Map<Integer, Nation> nations;
+    private Map<Integer, Nation> nations;
     private BufferedImage image;
 
     public Borders(Earthsmp plugin) {
         this.plugin = plugin;
         this.image = loadImage();
-        this.nations = loadNations();
+        loadNations();
 
         HashMap<Color, List<java.awt.Point>> boundaries = Shapes.TraceShapes(image);
         plugin.getLogger().info("Done Tracing!");
@@ -90,17 +90,16 @@ public class Borders {
         return new Color(r, g, b, a);
     }
 
-    private Map<Integer, Nation> loadNations() {
-        File file = new File(plugin.getDataFolder(), "nations.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+    public void loadNations() {
+        NationsConfig config = NationsConfig.Load(plugin);
 
         Map<Integer, Nation> nations = new HashMap<>();
-        for (Map<?, ?> raw : config.getMapList("nations")) {
-            Nation nation = Nation.deserialize((Map<String, Object>) raw);
+        for (Map<String, Object> raw : config.parsed) {
+            Nation nation = Nation.deserialize(raw);
             nations.put(nation.hue, nation);
         }
 
-        return nations;
+        this.nations = nations;
     }
 
     private String getLabel(Nation nation, float[] hsb) {
@@ -110,19 +109,10 @@ public class Borders {
         plugin.getLogger().info(format("%s", territory));
 
         if (territory != null) {
-            label.append(format("<h2>%s <i>(%s)</i></h2>", territory.name, nation.nick));
-
             if (territory.colony) {
-                label.append("<b>Inhabitants</b><br>");
-                label.append("<ul>");
-                for (UUID user : territory.members) {
-                    if (user == territory.ruler) {
-                        label.append(format("<li><b>* %s</b></li><br>", getOfflinePlayer(user).getName()));
-                    } else {
-                        label.append(format("<li>* %s</li><br>", getOfflinePlayer(user).getName()));
-                    }
-                }
-                label.append("</ul>");
+                label.append(format("<h2>%s <i>(Colony of %s)</i></h2>", territory.name, nation.nick));
+            } else {
+                label.append(format("<h2>%s <i>(%s)</i></h2>", territory.name, nation.nick));
             }
         } else {
             label.append(format("<h2>%s</h2>", nation.nick));

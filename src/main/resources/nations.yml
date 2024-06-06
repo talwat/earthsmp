@@ -26,10 +26,5 @@ nations:
         # (Required) An HSV saturation ranging from 0-100
         # This is only used internally in the map image, although that is subject to change
         color: 80
-        # (Required) The ruler of the territory. They just have permissions to add/remove members, and a few other small things
-        ruler: 88deebb7-e473-45ad-b51d-45b7f42ee5b1
-        # (Required) A list of people who have permissions in the territory, in UUID's
-        members:
-          - 88deebb7-e473-45ad-b51d-45b7f42ee5b1
         # (Required) Determines whether to display the members of the territory separately
         colony: false

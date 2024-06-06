@@ -1,6 +1,8 @@
 package dev.talwat.earthsmp.commands;
 
 import dev.talwat.earthsmp.Earthsmp;
+import dev.talwat.earthsmp.commands.admin.Config;
+import dev.talwat.earthsmp.commands.admin.ReloadBorders;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,7 +31,9 @@ public final class Handler implements CommandExecutor {
 
         return switch (args[0]) {
             case "test" -> new Test(plugin);
-            case "member", "members" -> new Member(plugin);
+            case "member", "members" -> new dev.talwat.earthsmp.commands.invites.Manage(plugin);
+            case "accept" -> new dev.talwat.earthsmp.commands.invites.Accept(plugin);
+            case "decline" -> new dev.talwat.earthsmp.commands.invites.Decline(plugin);
             default -> null;
         };
 

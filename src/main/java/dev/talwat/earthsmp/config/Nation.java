@@ -10,13 +10,13 @@ import static java.lang.String.format;
 import static org.bukkit.Bukkit.getServer;
 
 public class Nation {
-    public String tag;
-    public String name;
-    public String nick;
-    public int hue;
-    public UUID ruler;
-    public UUID[] members;
-    public Map<Integer, Territory> territories;
+    public final String tag;
+    public final String name;
+    public final String nick;
+    public final int hue;
+    public final UUID ruler;
+    public final UUID[] members;
+    public final Map<Integer, Territory> territories;
 
     public Nation(String tag, String name, String nick, int hue, UUID ruler, UUID[] members, Map<Integer, Territory> territories) {
         this.tag = tag;

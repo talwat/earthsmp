@@ -3,10 +3,13 @@ package dev.talwat.earthsmp;
 import dev.talwat.earthsmp.commands.Handler;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class Earthsmp extends JavaPlugin {
     public Borders borders;
+    public HashMap<UUID, InviteRequest> inviteRequests;
 
     @Override
     public void onEnable() {

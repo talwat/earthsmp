@@ -1,12 +1,13 @@
-package dev.talwat.earthsmp.commands;
+package dev.talwat.earthsmp.commands.admin;
 
 import dev.talwat.earthsmp.Borders;
 import dev.talwat.earthsmp.Earthsmp;
+import dev.talwat.earthsmp.commands.SubCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-class ReloadBorders extends SubCommand {
+public class ReloadBorders extends SubCommand {
     public ReloadBorders(Earthsmp plugin) {
         super(plugin);
     }

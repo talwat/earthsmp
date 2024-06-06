@@ -1,22 +1,21 @@
-package dev.talwat.earthsmp.commands;
+package dev.talwat.earthsmp.commands.admin;
 
 import dev.talwat.earthsmp.Earthsmp;
+import dev.talwat.earthsmp.commands.SubCommand;
 import dev.talwat.earthsmp.config.NationsConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import static java.lang.String.format;
 
-class Config extends SubCommand {
+public class Config extends SubCommand {
     public Config(Earthsmp plugin) {
         super(plugin);
     }
@@ -59,11 +58,7 @@ class Config extends SubCommand {
                 return false;
         }
 
-        try {
-            nationsConfig.Save();
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Couldn't save the config file", e);
-        }
+        nationsConfig.Save(plugin);
 
         return true;
     }

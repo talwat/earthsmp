@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * Handles the nations.yml config file.
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class NationsConfig {
     private final YamlConfiguration yaml;
     private final File file;
-    public List<Map<String, Object>> parsed;
+    public final List<Map<String, Object>> parsed;
 
     public NationsConfig(List<Map<String, Object>> parsed, YamlConfiguration yaml, File file) {
         this.parsed = parsed;
@@ -35,8 +36,12 @@ public class NationsConfig {
         return new NationsConfig((List<Map<String, Object>>) config.getList("nations"), config, file);
     }
 
-    public void Save() throws IOException {
-        yaml.save(file);
+    public void Save(Earthsmp plugin) {
+        try {
+            yaml.save(file);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.SEVERE, "Couldn't save the config file", e);
+        }
     }
 
     /**
