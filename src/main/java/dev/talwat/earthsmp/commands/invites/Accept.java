@@ -4,6 +4,7 @@ import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.InviteRequest;
 import dev.talwat.earthsmp.commands.SubCommand;
 import dev.talwat.earthsmp.config.NationsConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import static java.lang.String.format;
 
@@ -29,10 +31,20 @@ public class Accept extends SubCommand {
         Player player = (Player) sender;
 
         InviteRequest invite = plugin.inviteRequests.get(player.getUniqueId());
-        if (invite == null || Objects.equals(invite.nation, args[2])) {
-            sender.sendPlainMessage("Invite didn't exist or nation didn't match.");
+
+        plugin.getLogger().info(format("arg: %s", args[1]));
+
+        if (invite == null) {
+            sender.sendPlainMessage("Invite didn't exist.");
+
+            return true;
+        } else if (!Objects.equals(invite.nation, args[1])) {
+            sender.sendPlainMessage("Nation didn't match.");
+
             return true;
         }
+
+        plugin.getLogger().info(format("%s", invite.nation));
 
         NationsConfig config = NationsConfig.Load(plugin);
         Map<String, Object> nation = config.parsed.get(config.findNationByTag(invite.nation));
@@ -40,7 +52,13 @@ public class Accept extends SubCommand {
 
         plugin.inviteRequests.remove(player.getUniqueId());
 
-        sender.sendPlainMessage(format("Successfully joined %s!", nation.get("name")));
+        String nationName = (String) nation.get("name");
+
+        sender.sendPlainMessage(format("Successfully joined %s!", nationName));
+        Player ruler = Bukkit.getPlayer(UUID.fromString((String) nation.get("ruler")));
+        if (ruler != null) {
+            ruler.sendPlainMessage(format("%s has joined %s!", player.getName(), nationName));
+        }
 
         plugin.borders.loadNations();
         config.Save(plugin);

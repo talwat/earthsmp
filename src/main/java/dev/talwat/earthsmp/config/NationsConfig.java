@@ -15,9 +15,9 @@ import java.util.logging.Level;
  * Handles the nations.yml config file.
  */
 public class NationsConfig {
+    public final List<Map<String, Object>> parsed;
     private final YamlConfiguration yaml;
     private final File file;
-    public final List<Map<String, Object>> parsed;
 
     public NationsConfig(List<Map<String, Object>> parsed, YamlConfiguration yaml, File file) {
         this.parsed = parsed;

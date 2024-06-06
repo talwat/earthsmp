@@ -7,7 +7,7 @@ nations:
     # (Required) A shorter, unofficial name used in casual discussion or on maps
     nick: United States
     # (Required) An HSV hue from 0-360 that is used on the map
-    # This is done to distinguish between different territories of the same nation
+    # It's a hue to distinguish between different territories of the same nation
     color: 0
     # (Required) The ruler of the nation. They just have permissions to add/remove members, and a few other small things
     ruler: a6d32a31-3507-4606-a165-215dab060651
@@ -24,7 +24,6 @@ nations:
         # (Required) The only name, there is no official name for territories
         name: Hawaii
         # (Required) An HSV saturation ranging from 0-100
-        # This is only used internally in the map image, although that is subject to change
         color: 80
         # (Required) Determines whether to display the members of the territory separately
         colony: false

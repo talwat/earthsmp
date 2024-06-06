@@ -16,6 +16,7 @@ public final class Earthsmp extends JavaPlugin {
         saveDefaultConfig();
         saveResource("nations.yml", false);
         borders = new Borders(this);
+        inviteRequests = new HashMap<>();
 
         getLogger().info("EarthSMP plugin loaded!");
         getServer().getPluginManager().registerEvents(new EventListener(this), this);

@@ -1,7 +1,6 @@
 package dev.talwat.earthsmp.config;
 
 import java.util.Map;
-import java.util.UUID;
 
 public class Territory {
     public final String tag;

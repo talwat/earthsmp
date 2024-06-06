@@ -25,7 +25,7 @@ import static org.bukkit.Bukkit.getOfflinePlayer;
 public class Borders {
     private final Earthsmp plugin;
     // The key is also the `hue` value.
-    private Map<Integer, Nation> nations;
+    public Map<Integer, Nation> nations;
     private BufferedImage image;
 
     public Borders(Earthsmp plugin) {

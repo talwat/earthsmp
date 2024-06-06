@@ -38,7 +38,7 @@ public class Config extends SubCommand {
 
                 UUID ruler = Bukkit.getOfflinePlayer(args[7]).getUniqueId();
                 nation.put("ruler", ruler.toString());
-                nation.put("members", new String[0]);
+                nation.put("members", new String[]{ruler.toString()});
 
                 nations.add(nation);
                 sender.sendPlainMessage(format("Added %s (%s)!", nation.get("name"), nation.get("tag")));

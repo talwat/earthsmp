@@ -6,6 +6,7 @@ import dev.talwat.earthsmp.commands.SubCommand;
 import dev.talwat.earthsmp.config.Nation;
 import dev.talwat.earthsmp.config.NationsConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class Manage extends SubCommand {
         for (int i = 0; i < config.parsed.size(); i++) {
             Nation deserialized = Nation.deserialize(config.parsed.get(i));
 
-            if (sender instanceof Player && ((Player) sender).getUniqueId() == deserialized.ruler) {
+            if (sender instanceof Player && ((Player) sender).getUniqueId().equals(deserialized.ruler)) {
                 return i;
             }
         }
@@ -47,21 +48,34 @@ public class Manage extends SubCommand {
             return false;
         }
 
-        UUID player = getOfflinePlayer(args[2]).getUniqueId();
+        OfflinePlayer player = getOfflinePlayer(args[2]);
 
-        if (plugin.inviteRequests.containsKey(player)) {
+        if (!player.hasPlayedBefore()) {
+            sender.sendPlainMessage("Player not found. Have they played before?");
+        }
+        UUID playerUUID = player.getUniqueId();
+
+        for (Map.Entry<Integer, Nation> nation : plugin.borders.nations.entrySet()) {
+            if (nation.getValue().members.contains(playerUUID)) {
+                sender.sendPlainMessage(format("%s is already a part of %s! Tell them to leave before inviting them.", args[2], nation.getValue().name));
+                return true;
+            }
+        }
+
+        if (plugin.inviteRequests.containsKey(playerUUID)) {
             sender.sendPlainMessage(format("%s already has a pending invite, tell them to decline before sending another.", args[2]));
         }
-        Map<String, Object> nation = config.parsed.get(i);
-        plugin.inviteRequests.put(player, new InviteRequest(nation.get("tag").toString()));
 
-        Player online = Bukkit.getPlayer(player);
+        Map<String, Object> nation = config.parsed.get(i);
+        plugin.inviteRequests.put(playerUUID, new InviteRequest(nation.get("tag").toString()));
+
+        Player online = Bukkit.getPlayer(playerUUID);
         if (online != null) {
             online.sendPlainMessage(format("You have received an invite to join %s.", nation.get("name").toString()));
             online.sendPlainMessage(format("Run /earth accept %s to accept the invite.", nation.get("tag")));
         }
 
-        sender.sendPlainMessage(format("Invite request sent to %s!", player));
+        sender.sendPlainMessage(format("Invite request sent to %s!", getOfflinePlayer(args[2]).getName()));
         return true;
     }
 

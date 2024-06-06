@@ -15,7 +15,7 @@ public class Nation {
     public final String nick;
     public final int hue;
     public final UUID ruler;
-    public final UUID[] members;
+    public final List<UUID> members;
     public final Map<Integer, Territory> territories;
 
     public Nation(String tag, String name, String nick, int hue, UUID ruler, UUID[] members, Map<Integer, Territory> territories) {
@@ -24,7 +24,7 @@ public class Nation {
         this.nick = nick;
         this.hue = hue;
         this.ruler = ruler;
-        this.members = members;
+        this.members = List.of(members);
         this.territories = territories;
     }
 
