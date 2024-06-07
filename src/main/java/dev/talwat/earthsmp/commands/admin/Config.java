@@ -2,7 +2,7 @@ package dev.talwat.earthsmp.commands.admin;
 
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.commands.SubCommand;
-import dev.talwat.earthsmp.config.NationsConfig;
+import dev.talwat.earthsmp.nations.NationsConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -30,6 +30,10 @@ public class Config extends SubCommand {
 
         switch (args[2]) {
             case "add", "new":
+                if (args.length <= 7) {
+                    return false;
+                }
+
                 Map<String, Object> nation = new LinkedHashMap<>();
                 nation.put("tag", args[3]);
                 nation.put("name", args[4].replace("_", " "));

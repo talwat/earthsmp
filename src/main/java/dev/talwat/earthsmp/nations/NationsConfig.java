@@ -1,4 +1,4 @@
-package dev.talwat.earthsmp.config;
+package dev.talwat.earthsmp.nations;
 
 import dev.talwat.earthsmp.Earthsmp;
 import org.bukkit.configuration.file.YamlConfiguration;

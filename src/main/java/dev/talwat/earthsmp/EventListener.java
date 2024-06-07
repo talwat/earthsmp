@@ -1,5 +1,6 @@
 package dev.talwat.earthsmp;
 
+import dev.talwat.earthsmp.nations.Nation;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,17 +39,20 @@ public class EventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInteract(PlayerInteractEvent event) {
-        plugin.getLogger().info("Interaction!");
-
         Location pos = event.getInteractionPoint();
 
         if (pos == null) {
             return;
         }
 
-        pos = pos.toBlockLocation();
-
         Color color = plugin.borders.getColor(pos);
-        plugin.getLogger().info(format("%s", color));
+        float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        Nation nation = plugin.borders.nations.get(Math.round(hsv[0]));
+        if (nation == null || nation.members.contains(event.getPlayer().getUniqueId())) {
+            return;
+        }
+
+        event.getPlayer().sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick));
+        event.setCancelled(true);
     }
 }

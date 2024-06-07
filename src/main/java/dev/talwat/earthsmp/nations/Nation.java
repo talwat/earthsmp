@@ -1,13 +1,11 @@
-package dev.talwat.earthsmp.config;
+package dev.talwat.earthsmp.nations;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static dev.talwat.earthsmp.config.NationsConfig.getUUIDs;
-import static java.lang.String.format;
-import static org.bukkit.Bukkit.getServer;
+import static dev.talwat.earthsmp.nations.NationsConfig.getUUIDs;
 
 public class Nation {
     public final String tag;
@@ -29,7 +27,6 @@ public class Nation {
     }
 
     public static Nation deserialize(Map<String, Object> args) {
-        getServer().getLogger().info(format("%s", args.get("members")));
         UUID[] uuids = getUUIDs((List<String>) args.get("members"));
 
         Map<Integer, Territory> territories = new HashMap<>();

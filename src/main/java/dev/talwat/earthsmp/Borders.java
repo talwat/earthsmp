@@ -1,13 +1,12 @@
 package dev.talwat.earthsmp;
 
-import dev.talwat.earthsmp.config.Nation;
-import dev.talwat.earthsmp.config.NationsConfig;
-import dev.talwat.earthsmp.config.Territory;
-import org.bukkit.Bukkit;
+import dev.talwat.earthsmp.nations.Nation;
+import dev.talwat.earthsmp.nations.NationsConfig;
+import dev.talwat.earthsmp.nations.Territory;
 import org.bukkit.Location;
-import org.bukkit.World;
+import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.Point;
-import xyz.jpenilla.squaremap.api.*;
+import xyz.jpenilla.squaremap.api.SimpleLayerProvider;
 import xyz.jpenilla.squaremap.api.marker.Polygon;
 
 import javax.imageio.ImageIO;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
+import static dev.talwat.earthsmp.Squaremap.SetupLayerProvider;
 import static java.lang.String.format;
 import static org.bukkit.Bukkit.getOfflinePlayer;
 
@@ -30,13 +30,28 @@ public class Borders {
 
     public Borders(Earthsmp plugin) {
         this.plugin = plugin;
-        this.image = loadImage();
+        this.Load();
+    }
+
+    private static Color convertToColor(int rgb) {
+        int a = (rgb >> 24) & 0xFF;
+        int r = (rgb >> 16) & 0xFF;
+        int g = (rgb >> 8) & 0xFF;
+        int b = (rgb) & 0xFF;
+
+        return new Color(r, g, b, a);
+    }
+
+    public void Load() {
+        loadImage();
         loadNations();
 
-        HashMap<Color, List<java.awt.Point>> boundaries = Shapes.TraceShapes(image);
-        plugin.getLogger().info("Done Tracing!");
+        if (this.image == null || this.nations == null) {
+            return;
+        }
 
-        SimpleLayerProvider layerProvider = setupLayerProvider();
+        HashMap<Color, List<java.awt.Point>> boundaries = Shapes.TraceShapes(image);
+        SimpleLayerProvider layerProvider = SetupLayerProvider("Borders", "borders");
         if (layerProvider == null) {
             return;
         }
@@ -52,12 +67,6 @@ public class Borders {
                 Point p = imageToMap(point);
                 filtered.add(p);
             }
-
-            plugin.getLogger().info(format("Found shape with color %s", color));
-
-            plugin.getLogger().info(format("HSB: %f, %f, %f", hsb[0], hsb[1], hsb[2]));
-            plugin.getLogger().info(format("HSB: %f, %f, %f", hsb[0] * 360, hsb[1] * 100, hsb[2] * 100));
-            plugin.getLogger().info(format("Nations: %s", nations));
 
             Nation nation = nations.get(Math.round(hsb[0] * 360));
 
@@ -77,17 +86,6 @@ public class Borders {
 
             i++;
         }
-
-        plugin.getLogger().info(plugin.getConfig().getString("test"));
-    }
-
-    private static Color convertToColor(int rgb) {
-        int a = (rgb >> 24) & 0xFF;
-        int r = (rgb >> 16) & 0xFF;
-        int g = (rgb >> 8) & 0xFF;
-        int b = (rgb) & 0xFF;
-
-        return new Color(r, g, b, a);
     }
 
     public void loadNations() {
@@ -106,7 +104,6 @@ public class Borders {
         StringBuilder label = new StringBuilder();
 
         Territory territory = nation.territories.get(Math.round(hsb[1] * 100));
-        plugin.getLogger().info(format("%s", territory));
 
         if (territory != null) {
             if (territory.colony) {
@@ -123,7 +120,6 @@ public class Borders {
             label.append("<ul>");
             for (UUID user : nation.members) {
                 String username = getOfflinePlayer(user).getName();
-                plugin.getLogger().info(format("%s ?= %s", user, nation.ruler));
                 if (user.equals(nation.ruler)) {
                     label.append(format("<li><b>* %s</b></li><br>", username));
                 } else {
@@ -136,7 +132,7 @@ public class Borders {
         return label.toString();
     }
 
-    private BufferedImage loadImage() {
+    private void loadImage() {
         File file = new File(plugin.getDataFolder().getPath(), "borders.png");
 
         try {
@@ -145,41 +141,7 @@ public class Borders {
             plugin.getLogger().log(Level.SEVERE, "Couldn't open the map image file", e);
         }
 
-        return image;
-    }
-
-    private SimpleLayerProvider setupLayerProvider() {
-        Squaremap api = SquaremapProvider.get();
-
-        World world = Bukkit.getWorld("world");
-        if (world == null) {
-            return null;
-        }
-        WorldIdentifier identifier = BukkitAdapter.worldIdentifier(world);
-        MapWorld mapWorld = api.getWorldIfEnabled(identifier).orElse(null);
-        if (mapWorld == null) {
-            return null;
-        }
-
-        Key key = Key.key("borders");
-
-        if (mapWorld.layerRegistry().hasEntry(key)) {
-            mapWorld.layerRegistry().unregister(key);
-        }
-
-        // TODO: Add labels and shit
-        SimpleLayerProvider layerProvider = SimpleLayerProvider.builder("Borders")
-                .showControls(true)
-                .defaultHidden(false)
-                .layerPriority(5)
-                .zIndex(250)
-                .build();
-
-        mapWorld.layerRegistry().register(key, layerProvider);
-
-        layerProvider.clearMarkers();
-
-        return layerProvider;
+        this.image = image;
     }
 
     public java.awt.Point mapToImage(Location pos) {
@@ -206,7 +168,7 @@ public class Borders {
     }
 
     public Color getColor(Location pos) {
-        java.awt.Point mapToImage = mapToImage(pos);
+        java.awt.Point mapToImage = mapToImage(pos.toBlockLocation());
         return convertToColor(image.getRGB(mapToImage.x, mapToImage.y));
     }
 }

@@ -1,0 +1,20 @@
+# Defines locations for markers in each country.
+# Shown on squaremap.
+
+# Marker Types
+# * capital
+# * city
+# * lumber
+# * train
+# * fort
+# * mine
+# * port
+# * border_crossing
+
+markers:
+  - usa: # 3 letter tag
+      - label: Washington
+        type: capital
+        pos:
+          x: 0
+          z: 0

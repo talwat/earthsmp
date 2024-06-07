@@ -3,7 +3,7 @@ package dev.talwat.earthsmp.commands.invites;
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.InviteRequest;
 import dev.talwat.earthsmp.commands.SubCommand;
-import dev.talwat.earthsmp.config.NationsConfig;
+import dev.talwat.earthsmp.nations.NationsConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -32,8 +32,6 @@ public class Accept extends SubCommand {
 
         InviteRequest invite = plugin.inviteRequests.get(player.getUniqueId());
 
-        plugin.getLogger().info(format("arg: %s", args[1]));
-
         if (invite == null) {
             sender.sendPlainMessage("Invite didn't exist.");
 
@@ -43,8 +41,6 @@ public class Accept extends SubCommand {
 
             return true;
         }
-
-        plugin.getLogger().info(format("%s", invite.nation));
 
         NationsConfig config = NationsConfig.Load(plugin);
         Map<String, Object> nation = config.parsed.get(config.findNationByTag(invite.nation));

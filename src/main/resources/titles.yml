@@ -1,0 +1,7 @@
+# Custom titles for players in chat
+# Can be assigned by the ruler
+
+titles:
+  - usa: # 3 letter tag
+    - player: a6d32a31-3507-4606-a165-215dab060651
+      title: Dictator

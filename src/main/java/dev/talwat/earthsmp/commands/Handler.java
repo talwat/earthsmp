@@ -2,7 +2,7 @@ package dev.talwat.earthsmp.commands;
 
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.commands.admin.Config;
-import dev.talwat.earthsmp.commands.admin.ReloadBorders;
+import dev.talwat.earthsmp.commands.admin.Reload;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,7 +23,7 @@ public final class Handler implements CommandExecutor {
         if (sender.isOp()) {
             switch (args[0]) {
                 case "reloadborders":
-                    return new ReloadBorders(plugin);
+                    return new Reload(plugin);
                 case "config":
                     return new Config(plugin);
             }
@@ -34,6 +34,8 @@ public final class Handler implements CommandExecutor {
             case "member", "members" -> new dev.talwat.earthsmp.commands.invites.Manage(plugin);
             case "accept" -> new dev.talwat.earthsmp.commands.invites.Accept(plugin);
             case "decline" -> new dev.talwat.earthsmp.commands.invites.Decline(plugin);
+            case "marker", "markers" -> new dev.talwat.earthsmp.commands.Markers(plugin);
+            case "help" -> new Help(plugin);
             default -> null;
         };
 
