@@ -26,6 +26,7 @@ public class Borders {
     private final Earthsmp plugin;
     // The key is also the `hue` value.
     public Map<Integer, Nation> nations;
+    public Map<UUID, Nation> playerCache;
     private BufferedImage image;
 
     public Borders(Earthsmp plugin) {
@@ -45,6 +46,7 @@ public class Borders {
     public void Load() {
         loadImage();
         loadNations();
+        this.playerCache = new HashMap<>();
 
         if (this.image == null || this.nations == null) {
             return;
@@ -100,6 +102,14 @@ public class Borders {
         this.nations = nations;
     }
 
+    public Nation getNationFromLocation(Location pos) {
+        Color color = plugin.borders.getColor(pos.toBlockLocation());
+        float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        Nation nation = plugin.borders.nations.get(Math.round(hsv[0]));
+
+        return nation;
+    }
+
     private String getLabel(Nation nation, float[] hsb) {
         StringBuilder label = new StringBuilder();
 
@@ -140,8 +150,6 @@ public class Borders {
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Couldn't open the map image file", e);
         }
-
-        this.image = image;
     }
 
     public java.awt.Point mapToImage(Location pos) {
@@ -167,7 +175,7 @@ public class Borders {
         return Point.of(x, z);
     }
 
-    public Color getColor(Location pos) {
+    private Color getColor(Location pos) {
         java.awt.Point mapToImage = mapToImage(pos.toBlockLocation());
         return convertToColor(image.getRGB(mapToImage.x, mapToImage.y));
     }

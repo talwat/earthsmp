@@ -1,16 +1,18 @@
 package dev.talwat.earthsmp;
 
 import dev.talwat.earthsmp.commands.Handler;
+import dev.talwat.earthsmp.mapmarkers.MapMarkers;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public final class Earthsmp extends JavaPlugin {
     public Borders borders;
-    public Markers markers;
+    public MapMarkers markers;
     public Map<UUID, InviteRequest> inviteRequests;
 
     @Override
@@ -19,9 +21,15 @@ public final class Earthsmp extends JavaPlugin {
         saveResource("nations.yml", false);
         saveResource("markers.yml", false);
         saveResource("titles.yml", false);
+
         borders = new Borders(this);
         inviteRequests = new HashMap<>();
-        markers = new Markers(this);
+
+        try {
+            markers = new MapMarkers(this);
+        } catch (Exception e) {
+            getLogger().log(Level.SEVERE, "Couldn't load markers!", e);
+        }
 
         getLogger().info("EarthSMP plugin loaded!");
         getServer().getPluginManager().registerEvents(new EventListener(this), this);

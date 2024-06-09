@@ -1,6 +1,6 @@
-package dev.talwat.earthsmp;
+package dev.talwat.earthsmp.mapmarkers;
 
-import org.bukkit.Location;
+import dev.talwat.earthsmp.Earthsmp;
 import org.bukkit.configuration.file.YamlConfiguration;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.Point;
@@ -9,6 +9,8 @@ import xyz.jpenilla.squaremap.api.marker.Marker;
 import xyz.jpenilla.squaremap.api.marker.MarkerOptions;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +19,24 @@ import java.util.Map;
 import static dev.talwat.earthsmp.Squaremap.SetupLayerProvider;
 import static java.lang.String.format;
 
-public class Markers {
-    Map<String, List<IconMarker>> markers;
+public class MapMarkers {
+    public Map<String, List<MapMarker>> markers;
     Earthsmp plugin;
 
-    public Markers(Earthsmp plugin) {
+    public MapMarkers(Earthsmp plugin) throws Exception {
         this.plugin = plugin;
         this.Load();
+
+        for (MapMarkerType type : MapMarkerType.values()) {
+            File target = new File(format("plugins/squaremap/web/images/icon/registered/%s.png", type.toString()));
+
+            if (!target.exists()) {
+                plugin.getLogger().info(format("writing %s", type));
+                OutputStream outStream;
+                outStream = new FileOutputStream(target);
+                outStream.write(plugin.getResource(format("icons/%s.png", type)).readAllBytes());
+            }
+        }
     }
 
     public void Load() {
@@ -41,11 +54,7 @@ public class Markers {
 
             for (Map<String, Object> marker : entry.getValue()) {
                 markers.putIfAbsent(entry.getKey(), new ArrayList<>());
-                markers.get(entry.getKey()).add(new IconMarker(
-                        marker.get("label").toString(),
-                        marker.get("type").toString(),
-                        Location.deserialize((Map<String, Object>) marker.get("pos"))
-                ));
+                markers.get(entry.getKey()).add(MapMarker.deserialize(marker));
             }
         }
 
@@ -55,12 +64,12 @@ public class Markers {
         }
 
         int i = 0;
-        for (Map.Entry<String, List<IconMarker>> entry : markers.entrySet()) {
-            for (IconMarker iconMarker : entry.getValue()) {
+        for (Map.Entry<String, List<MapMarker>> entry : markers.entrySet()) {
+            for (MapMarker iconMarker : entry.getValue()) {
                 plugin.getLogger().info(format("%s", iconMarker.label));
 
                 Point point = Point.of(iconMarker.pos.getBlockX(), iconMarker.pos.getBlockZ());
-                Marker marker = Marker.icon(point, Key.key("squaremap-spawn_icon"), 16);
+                Marker marker = Marker.icon(point, Key.key(iconMarker.type.toString()), 16);
                 marker.markerOptions(MarkerOptions.builder().hoverTooltip(iconMarker.label));
 
                 layerProvider.addMarker(Key.key(format("marker_%d", i)), marker);

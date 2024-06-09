@@ -1,13 +1,18 @@
 package dev.talwat.earthsmp;
 
 import dev.talwat.earthsmp.nations.Nation;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.awt.*;
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -45,14 +50,43 @@ public class EventListener implements Listener {
             return;
         }
 
-        Color color = plugin.borders.getColor(pos);
-        float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-        Nation nation = plugin.borders.nations.get(Math.round(hsv[0]));
+        Nation nation = plugin.borders.getNationFromLocation(pos);
         if (nation == null || nation.members.contains(event.getPlayer().getUniqueId())) {
             return;
         }
 
         event.getPlayer().sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick));
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onChat(AsyncChatEvent event) {
+        event.renderer((source, sourceDisplayName, message, viewer) -> {
+            if (!plugin.borders.playerCache.containsKey(source.getUniqueId())) {
+                plugin.borders.playerCache.put(source.getUniqueId(), null);
+
+                for (Map.Entry<Integer, Nation> nation : plugin.borders.nations.entrySet()) {
+                    if (nation.getValue().members.contains(source.getUniqueId())) {
+                        plugin.borders.playerCache.put(source.getUniqueId(), nation.getValue());
+
+                        break;
+                    }
+                }
+            }
+
+            plugin.getLogger().info(format("%s", plugin.borders.playerCache));
+
+            Component prefix;
+            Nation nation = plugin.borders.playerCache.get(source.getUniqueId());
+            if (nation == null) {
+                prefix = Component.text("[Uncivilized]");
+            } else {
+                prefix = Component.text('[', Style.empty()).
+                        append(Component.text(nation.nick, TextColor.color(HSVLike.hsvLike(nation.hue / 360.0f, 0.75f, 1f))))
+                        .append(Component.text(']', Style.empty()));
+            }
+
+            return prefix.appendSpace().append(sourceDisplayName).append(Component.text(": ")).append(message);
+        });
     }
 }

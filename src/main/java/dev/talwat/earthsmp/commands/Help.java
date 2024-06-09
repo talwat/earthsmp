@@ -13,12 +13,12 @@ class Help extends SubCommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         sender.sendPlainMessage(
-                "\nearth test\nearth member add <username>\nearth member kick <username>\nearth accept <tag>\nearth decline\nearth leave"
+                "\nearth test\nearth member add <username>\nearth member kick <username>\nearth accept <tag>\nearth decline\nearth leave\nearth marker new <label> <type>\nearth marker list\nearth marker delete <index>\n"
         );
 
         if (sender.isOp()) {
             sender.sendPlainMessage(
-                    "\nearth reload\nearth config nation add <tag> <name> <nick> <hue> <ruler>"
+                    "earth reload\nearth config nation add <tag> <name> <nick> <hue> <ruler>\n"
             );
         }
 

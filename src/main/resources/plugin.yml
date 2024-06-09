@@ -9,4 +9,4 @@ depend:
 commands:
   earth:
     description: Custom EarthSMP commands
-    usage: /earth [command]
+    usage: /earth help
