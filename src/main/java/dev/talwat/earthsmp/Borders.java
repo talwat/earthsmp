@@ -125,19 +125,19 @@ public class Borders {
             label.append(format("<h2>%s</h2>", nation.nick));
         }
 
-        if (territory == null || !territory.colony) {
-            label.append("<b>Members</b><br>");
-            label.append("<ul>");
-            for (UUID user : nation.members) {
-                String username = getOfflinePlayer(user).getName();
-                if (user.equals(nation.ruler)) {
-                    label.append(format("<li><b>* %s</b></li><br>", username));
-                } else {
-                    label.append(format("<li>* %s</li><br>", username));
-                }
+        label.append("<b>Members</b><br>");
+        label.append("<ul>");
+
+        for (UUID user : nation.members) {
+            String username = getOfflinePlayer(user).getName();
+            if (user.equals(nation.ruler)) {
+                label.append(format("<li><b>* %s</b></li><br>", username));
+            } else {
+                label.append(format("<li>* %s</li><br>", username));
             }
-            label.append("</ul>");
         }
+
+        label.append("</ul>");
 
         return label.toString();
     }

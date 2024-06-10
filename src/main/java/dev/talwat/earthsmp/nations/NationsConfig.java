@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * Handles the nations.yml config file.
+ * Handles the news.yml config file.
  */
 public class NationsConfig {
     public final List<Map<String, Object>> parsed;

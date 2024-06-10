@@ -28,6 +28,11 @@ class Markers extends SubCommand {
         if (Objects.equals(entry.getKey(), tag)) {
             if (entry.getValue() == null) {
                 entry.setValue(new ArrayList<>());
+            } else {
+                if (entry.getValue().size() > 200) {
+                    player.sendPlainMessage("You've exceeded the max amount of markers! You should probably delete some.");
+                    return true;
+                }
             }
 
             entry.getValue().add(new MapMarker(args[2], MapMarkerType.valueOf(args[3]), player.getLocation()).serialize());
@@ -45,11 +50,11 @@ class Markers extends SubCommand {
             return true;
         }
 
-        player.sendPlainMessage("Adding marker...");
-
         if (args.length <= 3) {
             return false;
         }
+
+        player.sendPlainMessage("Adding marker...");
 
         for (Map<String, List<Map<String, Object>>> nationMarkers : markers) {
             if (checkAddition(nationMarkers, args, tag, player)) {

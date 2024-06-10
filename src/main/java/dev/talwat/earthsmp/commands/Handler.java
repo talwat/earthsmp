@@ -22,7 +22,7 @@ public final class Handler implements CommandExecutor {
 
         if (sender.isOp()) {
             switch (args[0]) {
-                case "reloadborders":
+                case "reload":
                     return new Reload(plugin);
                 case "config":
                     return new Config(plugin);
@@ -31,6 +31,7 @@ public final class Handler implements CommandExecutor {
 
         return switch (args[0]) {
             case "test" -> new Test(plugin);
+            case "news" -> new News(plugin);
             case "member", "members" -> new dev.talwat.earthsmp.commands.invites.Manage(plugin);
             case "accept" -> new dev.talwat.earthsmp.commands.invites.Accept(plugin);
             case "decline" -> new dev.talwat.earthsmp.commands.invites.Decline(plugin);

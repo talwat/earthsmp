@@ -31,7 +31,6 @@ public class MapMarkers {
             File target = new File(format("plugins/squaremap/web/images/icon/registered/%s.png", type.toString()));
 
             if (!target.exists()) {
-                plugin.getLogger().info(format("writing %s", type));
                 OutputStream outStream;
                 outStream = new FileOutputStream(target);
                 outStream.write(plugin.getResource(format("icons/%s.png", type)).readAllBytes());
@@ -66,8 +65,6 @@ public class MapMarkers {
         int i = 0;
         for (Map.Entry<String, List<MapMarker>> entry : markers.entrySet()) {
             for (MapMarker iconMarker : entry.getValue()) {
-                plugin.getLogger().info(format("%s", iconMarker.label));
-
                 Point point = Point.of(iconMarker.pos.getBlockX(), iconMarker.pos.getBlockZ());
                 Marker marker = Marker.icon(point, Key.key(iconMarker.type.toString()), 16);
                 marker.markerOptions(MarkerOptions.builder().hoverTooltip(iconMarker.label));

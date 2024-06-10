@@ -10,10 +10,13 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import static java.lang.String.format;
+
 public final class Earthsmp extends JavaPlugin {
     public Borders borders;
     public MapMarkers markers;
     public Map<UUID, InviteRequest> inviteRequests;
+    public News news;
 
     @Override
     public void onEnable() {
@@ -21,14 +24,15 @@ public final class Earthsmp extends JavaPlugin {
         saveResource("nations.yml", false);
         saveResource("markers.yml", false);
         saveResource("titles.yml", false);
-
-        borders = new Borders(this);
-        inviteRequests = new HashMap<>();
+        saveResource("news/news.yml", false);
 
         try {
+            borders = new Borders(this);
+            inviteRequests = new HashMap<>();
             markers = new MapMarkers(this);
+            news = new News(this);
         } catch (Exception e) {
-            getLogger().log(Level.SEVERE, "Couldn't load markers!", e);
+            getLogger().log(Level.SEVERE, "An error occurred while loading!", e);
         }
 
         getLogger().info("EarthSMP plugin loaded!");
