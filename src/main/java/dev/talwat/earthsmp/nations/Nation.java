@@ -27,7 +27,13 @@ public class Nation {
     }
 
     public static Nation deserialize(Map<String, Object> args) {
-        UUID[] uuids = getUUIDs((List<String>) args.get("members"));
+        List<String> rawMembers = (List<String>) args.get("members");
+        UUID[] uuids;
+        if (rawMembers == null) {
+            uuids = new UUID[0];
+        } else {
+            uuids = getUUIDs(rawMembers);
+        }
 
         Map<Integer, Territory> territories = new HashMap<>();
         Object rawTerritories = args.get("territories");
@@ -39,12 +45,19 @@ public class Nation {
             }
         }
 
+        String rawRuler = (String) args.get("ruler");
+        UUID ruler = null;
+
+        if (rawRuler != null) {
+            ruler = UUID.fromString(rawRuler);
+        }
+
         return new Nation(
                 (String) args.get("tag"),
                 (String) args.get("name"),
                 (String) args.get("nick"),
                 (int) args.get("color"),
-                UUID.fromString((String) args.get("ruler")),
+                ruler,
                 uuids,
                 territories
         );

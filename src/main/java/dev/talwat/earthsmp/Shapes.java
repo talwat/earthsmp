@@ -40,6 +40,10 @@ class ContourTracing {
         return isWithinBounds(p, image) && new Color(image.getRGB(p.x, p.y)).equals(target);
     }
 
+    public static boolean IsGrayScale(Color color) {
+        return (color.getRed() == color.getGreen() && color.getGreen() == color.getBlue());
+    }
+
     public static List<Point> trace(Point start, Color target, BufferedImage image) {
         List<Point> boundary = new ArrayList<>();
         Point current = new Point(start);

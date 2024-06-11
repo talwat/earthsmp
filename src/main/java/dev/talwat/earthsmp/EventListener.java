@@ -7,9 +7,15 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.Map;
@@ -23,39 +29,49 @@ public class EventListener implements Listener {
         this.plugin = plugin;
     }
 
-//    @EventHandler(priority = EventPriority.LOWEST)
-//    public void onBlockPlace(BlockPlaceEvent event) {
-//        event.setCancelled(true);
-//    }
-//
-//    @EventHandler(priority = EventPriority.LOWEST)
-//    public void onBlockBreak(BlockBreakEvent event) {
-//        event.setCancelled(true);
-//    }
-//
-//    @EventHandler(priority = EventPriority.LOWEST)
-//    public void onDamage(EntityDamageEvent event) {
-//        if (event.getEntityType() == EntityType.PLAYER || event.getEntity() instanceof Monster) {
-//            return;
-//        }
-//
-//        event.setCancelled(true);
-//    }
+    private boolean isAllowed(Location pos, Player player) {
+        Nation nation = plugin.borders.getNationFromLocation(pos);
+
+        if (nation == null || nation.members.contains(player.getUniqueId())) {
+            return true;
+        }
+
+        player.sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick));
+        return false;
+    }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onInteract(PlayerInteractEvent event) {
-        Location pos = event.getInteractionPoint();
-
-        if (pos == null) {
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.getEntityType() == EntityType.PLAYER || event.getEntity() instanceof Monster) {
             return;
         }
 
-        Nation nation = plugin.borders.getNationFromLocation(pos);
-        if (nation == null || nation.members.contains(event.getPlayer().getUniqueId())) {
+        if (event.getDamager().getType() != EntityType.PLAYER) {
             return;
         }
 
-        event.getPlayer().sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick));
+        Player player = ((Player) event.getDamager());
+
+        if (isAllowed(event.getEntity().getLocation(), player)) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onBlock(PlayerInteractEvent event) {
+        Block interacted = event.getClickedBlock();
+        if (interacted == null) {
+            return;
+        }
+
+        Location pos = interacted.getLocation();
+
+        if (isAllowed(pos, event.getPlayer())) {
+            return;
+        }
+
         event.setCancelled(true);
     }
 

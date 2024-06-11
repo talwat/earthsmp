@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
+import static dev.talwat.earthsmp.ContourTracing.IsGrayScale;
 import static dev.talwat.earthsmp.Squaremap.SetupLayerProvider;
 import static java.lang.String.format;
 import static org.bukkit.Bukkit.getOfflinePlayer;
@@ -104,8 +105,13 @@ public class Borders {
 
     public Nation getNationFromLocation(Location pos) {
         Color color = plugin.borders.getColor(pos.toBlockLocation());
+
+        if (IsGrayScale(color) || color.getAlpha() == 0) {
+            return null;
+        }
+
         float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-        Nation nation = plugin.borders.nations.get(Math.round(hsv[0]));
+        Nation nation = plugin.borders.nations.get(Math.round(hsv[0] * 360));
 
         return nation;
     }
@@ -125,19 +131,21 @@ public class Borders {
             label.append(format("<h2>%s</h2>", nation.nick));
         }
 
-        label.append("<b>Members</b><br>");
-        label.append("<ul>");
+        if (!nation.members.isEmpty()) {
+            label.append("<b>Members</b><br>");
+            label.append("<ul>");
 
-        for (UUID user : nation.members) {
-            String username = getOfflinePlayer(user).getName();
-            if (user.equals(nation.ruler)) {
-                label.append(format("<li><b>* %s</b></li><br>", username));
-            } else {
-                label.append(format("<li>* %s</li><br>", username));
+            for (UUID user : nation.members) {
+                String username = getOfflinePlayer(user).getName();
+                if (user.equals(nation.ruler)) {
+                    label.append(format("<li><b>* %s</b></li><br>", username));
+                } else {
+                    label.append(format("<li>* %s</li><br>", username));
+                }
             }
-        }
 
-        label.append("</ul>");
+            label.append("</ul>");
+        }
 
         return label.toString();
     }
