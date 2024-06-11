@@ -18,7 +18,7 @@ public class Reload extends SubCommand {
         sender.sendPlainMessage("Reloading...");
 
         if (args.length > 1) {
-            switch(args[1]) {
+            switch (args[1]) {
                 case "news":
                     plugin.news.Load();
                     break;

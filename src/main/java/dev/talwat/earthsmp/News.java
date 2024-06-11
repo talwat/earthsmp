@@ -3,24 +3,32 @@ package dev.talwat.earthsmp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 
 public class News {
+    private final Earthsmp plugin;
     public LinkedHashMap<Date, String> articles;
     public Map.Entry<Date, String> current;
-    private final Earthsmp plugin;
+
+    public News(Earthsmp plugin) {
+        this.plugin = plugin;
+        Load();
+    }
 
     public void Load() {
         File directory = new File(plugin.getDataFolder(), "news");
 
         HashMap<Date, String> unsorted = new HashMap<>();
         for (File file : directory.listFiles()) {
-            int dotIdx = file.getName().lastIndexOf('.')+1;
+            int dotIdx = file.getName().lastIndexOf('.') + 1;
 
             String extension = file.getName().substring(dotIdx);
-            String raw = file.getName().substring(0, dotIdx-1);
+            String raw = file.getName().substring(0, dotIdx - 1);
 
             if (!extension.equals("txt")) {
                 continue;
@@ -53,10 +61,5 @@ public class News {
         for (Map.Entry<Date, String> entry : articles.entrySet()) {
             current = entry;
         }
-    }
-
-    public News(Earthsmp plugin) {
-        this.plugin = plugin;
-        Load();
     }
 }

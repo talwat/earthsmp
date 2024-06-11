@@ -10,8 +10,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import static java.lang.String.format;
-
 public final class Earthsmp extends JavaPlugin {
     public Borders borders;
     public MapMarkers markers;
