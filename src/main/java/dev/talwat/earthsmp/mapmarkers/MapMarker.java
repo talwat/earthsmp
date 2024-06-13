@@ -1,16 +1,14 @@
 package dev.talwat.earthsmp.mapmarkers;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MapMarker {
-    public String label;
-    public MapMarkerType type;
-    public Location pos;
-
+public record MapMarker(String label, MapMarkerType type, Location pos) implements ConfigurationSerializable {
     public MapMarker(String label, MapMarkerType type, Location pos) {
         this.label = label;
         this.type = type;
@@ -32,7 +30,7 @@ public class MapMarker {
         );
     }
 
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         Map<String, Object> serialized = new LinkedHashMap<>();
         serialized.put("label", label);
         serialized.put("type", type.toString());

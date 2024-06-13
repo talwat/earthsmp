@@ -20,8 +20,8 @@ import static dev.talwat.earthsmp.Squaremap.SetupLayerProvider;
 import static java.lang.String.format;
 
 public class MapMarkers {
+    private final Earthsmp plugin;
     public Map<String, List<MapMarker>> markers;
-    Earthsmp plugin;
 
     public MapMarkers(Earthsmp plugin) throws Exception {
         this.plugin = plugin;
@@ -38,16 +38,39 @@ public class MapMarkers {
         }
     }
 
+    public static Map.Entry<String, List<Map<String, Object>>> getSection(Map<String, List<Map<String, Object>>> raw) {
+        var first = raw.entrySet().stream().findFirst();
+        if (first.isEmpty()) {
+            return null;
+        }
+
+        var entry = first.get();
+
+        if (entry.getValue() == null) {
+            return null;
+        }
+
+        return entry;
+    }
+
     public void Load() {
         File file = new File(plugin.getDataFolder(), "markers.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         this.markers = new HashMap<>();
 
-        for (Map<String, List<Map<String, Object>>> nationMarkers : (List<Map<String, List<Map<String, Object>>>>) config.getList("markers")) {
-            Map.Entry<String, List<Map<String, Object>>> entry = nationMarkers.entrySet().stream().findFirst().get();
+        if (config.getList("markers") == null) {
+            return;
+        }
 
-            if (entry.getValue() == null) {
+        var list = (List<Map<String, List<Map<String, Object>>>>) config.getList("markers");
+        if (list == null) {
+            return;
+        }
+
+        for (Map<String, List<Map<String, Object>>> nationMarkers : list) {
+            var entry = getSection(nationMarkers);
+            if (entry == null) {
                 continue;
             }
 
@@ -64,10 +87,10 @@ public class MapMarkers {
 
         int i = 0;
         for (Map.Entry<String, List<MapMarker>> entry : markers.entrySet()) {
-            for (MapMarker iconMarker : entry.getValue()) {
-                Point point = Point.of(iconMarker.pos.getBlockX(), iconMarker.pos.getBlockZ());
-                Marker marker = Marker.icon(point, Key.key(iconMarker.type.toString()), 16);
-                marker.markerOptions(MarkerOptions.builder().hoverTooltip(iconMarker.label));
+            for (MapMarker mapMarker : entry.getValue()) {
+                Point point = Point.of(mapMarker.pos().getBlockX(), mapMarker.pos().getBlockZ());
+                Marker marker = Marker.icon(point, Key.key(mapMarker.type().toString()), 16);
+                marker.markerOptions(MarkerOptions.builder().hoverTooltip(mapMarker.label()));
 
                 layerProvider.addMarker(Key.key(format("marker_%d", i)), marker);
 

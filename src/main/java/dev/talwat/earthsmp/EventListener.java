@@ -31,11 +31,11 @@ public class EventListener implements Listener {
     private boolean isAllowed(Location pos, Player player) {
         Nation nation = plugin.borders.getNationFromLocation(pos);
 
-        if (nation == null || nation.members.contains(player.getUniqueId())) {
+        if (nation == null || nation.members().contains(player.getUniqueId())) {
             return true;
         }
 
-        player.sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick));
+        player.sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick()));
         return false;
     }
 
@@ -81,7 +81,7 @@ public class EventListener implements Listener {
                 plugin.borders.playerCache.put(source.getUniqueId(), null);
 
                 for (Map.Entry<Integer, Nation> nation : plugin.borders.nations.entrySet()) {
-                    if (nation.getValue().members.contains(source.getUniqueId())) {
+                    if (nation.getValue().members().contains(source.getUniqueId())) {
                         plugin.borders.playerCache.put(source.getUniqueId(), nation.getValue());
 
                         break;
@@ -97,7 +97,7 @@ public class EventListener implements Listener {
                 prefix = Component.text("[Uncivilized]");
             } else {
                 prefix = Component.text('[', Style.empty()).
-                        append(Component.text(nation.nick, TextColor.color(HSVLike.hsvLike(nation.hue / 360.0f, 0.75f, 1f))))
+                        append(Component.text(nation.nick(), TextColor.color(HSVLike.hsvLike(nation.hue() / 360.0f, 0.75f, 1f))))
                         .append(Component.text(']', Style.empty()));
             }
 

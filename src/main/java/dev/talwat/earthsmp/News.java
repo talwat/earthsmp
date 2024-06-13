@@ -23,8 +23,13 @@ public class News {
     public void Load() {
         File directory = new File(plugin.getDataFolder(), "news");
 
+        File[] fileList = directory.listFiles();
+        if (fileList == null) {
+            return;
+        }
+
         HashMap<Date, String> unsorted = new HashMap<>();
-        for (File file : directory.listFiles()) {
+        for (File file : fileList) {
             int dotIdx = file.getName().lastIndexOf('.') + 1;
 
             String extension = file.getName().substring(dotIdx);
@@ -52,9 +57,7 @@ public class News {
 
         unsorted.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
-                .forEach(entry -> {
-                    articles.put(entry.getKey(), entry.getValue());
-                });
+                .forEach(entry -> articles.put(entry.getKey(), entry.getValue()));
 
         current = null;
 

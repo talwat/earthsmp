@@ -35,6 +35,7 @@ public final class Handler implements CommandExecutor {
             case "member", "members" -> new dev.talwat.earthsmp.commands.invites.Manage(plugin);
             case "accept" -> new dev.talwat.earthsmp.commands.invites.Accept(plugin);
             case "decline" -> new dev.talwat.earthsmp.commands.invites.Decline(plugin);
+            case "leave" -> new dev.talwat.earthsmp.commands.invites.Leave(plugin);
             case "marker", "markers" -> new dev.talwat.earthsmp.commands.Markers(plugin);
             case "help" -> new Help(plugin);
             default -> null;

@@ -2,13 +2,14 @@ package dev.talwat.earthsmp.commands.admin;
 
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.commands.SubCommand;
+import dev.talwat.earthsmp.nations.Nation;
 import dev.talwat.earthsmp.nations.NationsConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,22 +31,29 @@ public class Config extends SubCommand {
 
         switch (args[2]) {
             case "add", "new":
-                if (args.length <= 7) {
+                if (args.length <= 6) {
                     return false;
                 }
 
-                Map<String, Object> nation = new LinkedHashMap<>();
-                nation.put("tag", args[3]);
-                nation.put("name", args[4].replace("_", " "));
-                nation.put("nick", args[5].replace("_", " "));
-                nation.put("color", Integer.valueOf(args[6]));
+                UUID ruler = null;
+                List<UUID> members = new ArrayList<>();
+                if (args.length > 7) {
+                    ruler = Bukkit.getOfflinePlayer(args[7]).getUniqueId();
+                    members.add(ruler);
+                }
 
-                UUID ruler = Bukkit.getOfflinePlayer(args[7]).getUniqueId();
-                nation.put("ruler", ruler.toString());
-                nation.put("members", new String[]{ruler.toString()});
+                Nation nation = new Nation(
+                        args[3],
+                        args[4].replace('_', ' '),
+                        args[5].replace('_', ' '),
+                        Integer.parseInt(args[6]),
+                        ruler,
+                        members,
+                        null
+                );
 
-                nations.add(nation);
-                sender.sendPlainMessage(format("Added %s (%s)!", nation.get("name"), nation.get("tag")));
+                nations.add(nation.serialize());
+                sender.sendPlainMessage(format("Added %s (%s)!", nation.name(), nation.tag()));
 
                 break;
             case "remove", "delete":

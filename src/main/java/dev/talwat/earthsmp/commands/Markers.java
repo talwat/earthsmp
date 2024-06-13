@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
+import static dev.talwat.earthsmp.mapmarkers.MapMarkers.getSection;
 import static java.lang.String.format;
 
 
@@ -24,7 +25,11 @@ class Markers extends SubCommand {
     }
 
     private boolean checkAddition(Map<String, List<Map<String, Object>>> nationMarkers, String[] args, String tag, Player player) {
-        Map.Entry<String, List<Map<String, Object>>> entry = nationMarkers.entrySet().stream().findFirst().get();
+        var entry = getSection(nationMarkers);
+        if (entry == null) {
+            return false;
+        }
+
         if (Objects.equals(entry.getKey(), tag)) {
             if (entry.getValue() == null) {
                 entry.setValue(new ArrayList<>());
@@ -45,7 +50,7 @@ class Markers extends SubCommand {
 
     private boolean add(@NotNull Player player, @NotNull String[] args, String tag, List<Map<String, List<Map<String, Object>>>> markers) {
         Nation nation = plugin.borders.getNationFromLocation(player.getLocation());
-        if (nation == null || !nation.tag.equals(tag)) {
+        if (nation == null || !nation.tag().equals(tag)) {
             player.sendPlainMessage("You can't make a marker outside your own territory!");
             return true;
         }
@@ -83,7 +88,10 @@ class Markers extends SubCommand {
         }
 
         for (Map<String, List<Map<String, Object>>> nationMarkers : markers) {
-            Map.Entry<String, List<Map<String, Object>>> entry = nationMarkers.entrySet().stream().findFirst().get();
+            var entry = getSection(nationMarkers);
+            if (entry == null) {
+                continue;
+            }
 
             if (Objects.equals(entry.getKey(), tag)) {
                 if (entry.getValue() == null) {
@@ -121,7 +129,7 @@ class Markers extends SubCommand {
         }
 
         for (MapMarker marker : plugin.markers.markers.get(tag)) {
-            player.sendPlainMessage(format("%s - %s - (%s, %s)", i, marker.label, marker.pos.getBlockX(), marker.pos.getBlockZ()));
+            player.sendPlainMessage(format("%s - %s - (%s, %s)", i, marker.label(), marker.pos().getBlockX(), marker.pos().getBlockZ()));
 
             i++;
         }
@@ -135,24 +143,27 @@ class Markers extends SubCommand {
             return false;
         }
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return true;
         }
 
-        Player player = (Player) sender;
         String tag = null;
 
         File file = new File(plugin.getDataFolder(), "markers.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         for (Nation nation : plugin.borders.nations.values()) {
-            if (nation.ruler.equals(player.getUniqueId())) {
-                tag = nation.tag;
+            if (nation.ruler() == null) {
+                continue;
+            }
+
+            if (nation.ruler().equals(player.getUniqueId())) {
+                tag = nation.tag();
             }
         }
 
         if (tag == null) {
-            sender.sendPlainMessage("You have to be the ruler to manage markers!");
+            sender.sendPlainMessage("You have to be a ruler to manage markers!");
         }
 
         if (args[1].equals("list")) {

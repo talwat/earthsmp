@@ -12,6 +12,7 @@ public class Squaremap {
         if (world == null) {
             return null;
         }
+
         WorldIdentifier identifier = BukkitAdapter.worldIdentifier(world);
         MapWorld mapWorld = api.getWorldIfEnabled(identifier).orElse(null);
         if (mapWorld == null) {

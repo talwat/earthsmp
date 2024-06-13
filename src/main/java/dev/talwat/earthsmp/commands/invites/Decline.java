@@ -15,11 +15,9 @@ public class Decline extends SubCommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return true;
         }
-
-        Player player = (Player) sender;
 
         InviteRequest invite = plugin.inviteRequests.get(player.getUniqueId());
         if (invite == null) {

@@ -28,7 +28,7 @@ public class Manage extends SubCommand {
         for (int i = 0; i < config.parsed.size(); i++) {
             Nation deserialized = Nation.deserialize(config.parsed.get(i));
 
-            if (sender instanceof Player && ((Player) sender).getUniqueId().equals(deserialized.ruler)) {
+            if (sender instanceof Player && ((Player) sender).getUniqueId().equals(deserialized.ruler())) {
                 return i;
             }
         }
@@ -56,8 +56,8 @@ public class Manage extends SubCommand {
         UUID playerUUID = player.getUniqueId();
 
         for (Map.Entry<Integer, Nation> nation : plugin.borders.nations.entrySet()) {
-            if (nation.getValue().members.contains(playerUUID)) {
-                sender.sendPlainMessage(format("%s is already a part of %s! Tell them to leave before inviting them.", args[2], nation.getValue().name));
+            if (nation.getValue().members().contains(playerUUID)) {
+                sender.sendPlainMessage(format("%s is already a part of %s! Tell them to leave before inviting them.", args[2], nation.getValue().name()));
                 return true;
             }
         }

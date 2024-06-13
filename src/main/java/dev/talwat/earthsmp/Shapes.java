@@ -28,15 +28,7 @@ class ContourTracing {
         return new Point(p.x + DIRECTIONS[orientation][0], p.y + DIRECTIONS[orientation][1]);
     }
 
-    private static boolean isBlack(BufferedImage image, Point p, Color target, boolean isNeighbor) {
-//        if (!isNeighbor) {
-//            for (int[] direction : DIRECTIONS) {
-//                if (isBlack(image, new Point(p.x + direction[0], p.y + direction[1]), target, true)) {
-//                    return true;
-//                }
-//            }
-//        }
-
+    private static boolean isBlack(BufferedImage image, Point p, Color target) {
         return isWithinBounds(p, image) && new Color(image.getRGB(p.x, p.y)).equals(target);
     }
 
@@ -56,7 +48,7 @@ class ContourTracing {
             // Try to find the next boundary pixel
             for (int i = 0; i < 4; i++) {
                 Point next = getNextPoint(current, orientation);
-                if (isBlack(image, next, target, false)) {
+                if (isBlack(image, next, target)) {
                     current = next;
                     orientation = turnLeft(orientation); // Turn left after finding the target
                     foundNext = true;

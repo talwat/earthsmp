@@ -20,12 +20,11 @@ public class Leave extends SubCommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             return true;
         }
 
         NationsConfig config = NationsConfig.Load(plugin);
-        Player player = (Player) sender;
         for (Map<String, Object> nation : config.parsed) {
             boolean removed = ((List<String>) nation.get("members")).remove(player.getUniqueId().toString());
 

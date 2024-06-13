@@ -25,8 +25,8 @@ public class NationsConfig {
         this.file = file;
     }
 
-    public static UUID[] getUUIDs(List<String> args) {
-        return args.stream().map(UUID::fromString).toArray(UUID[]::new);
+    public static List<UUID> getUUIDs(List<String> args) {
+        return args.stream().map(UUID::fromString).toList();
     }
 
     public static NationsConfig Load(Earthsmp plugin) {

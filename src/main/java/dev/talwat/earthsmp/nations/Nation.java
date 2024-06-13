@@ -1,47 +1,33 @@
 package dev.talwat.earthsmp.nations;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 import static dev.talwat.earthsmp.nations.NationsConfig.getUUIDs;
 
-public class Nation {
-    public final String tag;
-    public final String name;
-    public final String nick;
-    public final int hue;
-    public final UUID ruler;
-    public final List<UUID> members;
-    public final Map<Integer, Territory> territories;
-
-    public Nation(String tag, String name, String nick, int hue, UUID ruler, UUID[] members, Map<Integer, Territory> territories) {
-        this.tag = tag;
-        this.name = name;
-        this.nick = nick;
-        this.hue = hue;
-        this.ruler = ruler;
-        this.members = List.of(members);
-        this.territories = territories;
-    }
+public record Nation(@NotNull String tag, @NotNull String name, @NotNull String nick, int hue, @Nullable UUID ruler,
+                     @NotNull List<UUID> members,
+                     @Nullable Map<Integer, Territory> territories) implements ConfigurationSerializable {
 
     public static Nation deserialize(Map<String, Object> args) {
         List<String> rawMembers = (List<String>) args.get("members");
-        UUID[] uuids;
-        if (rawMembers == null) {
-            uuids = new UUID[0];
-        } else {
+        List<UUID> uuids = List.of();
+        if (rawMembers != null) {
             uuids = getUUIDs(rawMembers);
         }
 
-        Map<Integer, Territory> territories = new HashMap<>();
+        Map<Integer, Territory> territories = null;
         Object rawTerritories = args.get("territories");
 
         if (rawTerritories != null) {
+            territories = new HashMap<>();
+
             for (Map<String, Object> raw : (List<Map<String, Object>>) rawTerritories) {
                 Territory territory = Territory.deserialize(raw);
-                territories.put(territory.saturation, territory);
+                territories.put(territory.saturation(), territory);
             }
         }
 
@@ -61,5 +47,23 @@ public class Nation {
                 uuids,
                 territories
         );
+    }
+
+    public @NotNull Map<String, Object> serialize() {
+        Map<String, Object> nation = new LinkedHashMap<>();
+        nation.put("tag", tag);
+        nation.put("name", name);
+        nation.put("nick", nick);
+        nation.put("color", hue);
+
+        if (this.ruler != null) {
+            nation.put("ruler", ruler.toString());
+        }
+
+        if (!this.members.isEmpty()) {
+            nation.put("members", this.members);
+        }
+
+        return nation;
     }
 }

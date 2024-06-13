@@ -83,7 +83,7 @@ public class Borders {
                             .asBuilder()
                             .fillColor(color)
                             .strokeColor(color.brighter())
-                            .clickTooltip(getLabel(nation, hsb))
+                            .clickTooltip(getMapLabel(nation, hsb))
             );
             layerProvider.addMarker(Key.key(format("borders_%s", i)), marker);
 
@@ -97,7 +97,7 @@ public class Borders {
         Map<Integer, Nation> nations = new HashMap<>();
         for (Map<String, Object> raw : config.parsed) {
             Nation nation = Nation.deserialize(raw);
-            nations.put(nation.hue, nation);
+            nations.put(nation.hue(), nation);
         }
 
         this.nations = nations;
@@ -111,33 +111,41 @@ public class Borders {
         }
 
         float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
-        Nation nation = plugin.borders.nations.get(Math.round(hsv[0] * 360));
 
-        return nation;
+        return plugin.borders.nations.get(Math.round(hsv[0] * 360));
     }
 
-    private String getLabel(Nation nation, float[] hsb) {
-        StringBuilder label = new StringBuilder();
+    private String getName(Nation nation, float[] hsb) {
+        String base = format("<h2>%s</h2>", nation.nick());
 
-        Territory territory = nation.territories.get(Math.round(hsb[1] * 100));
-
-        if (territory != null) {
-            if (territory.colony) {
-                label.append(format("<h2>%s <i>(Colony of %s)</i></h2>", territory.name, nation.nick));
-            } else {
-                label.append(format("<h2>%s <i>(%s)</i></h2>", territory.name, nation.nick));
-            }
-        } else {
-            label.append(format("<h2>%s</h2>", nation.nick));
+        if (nation.territories() == null) {
+            return base;
         }
 
-        if (!nation.members.isEmpty()) {
+        Territory territory = nation.territories().get(Math.round(hsb[1] * 100));
+        if (territory == null) {
+            return base;
+        }
+
+        if (territory.colony()) {
+            return format("<h2>%s <i>(Colony of %s)</i></h2>", territory.name(), nation.nick());
+        } else {
+            return format("<h2>%s <i>(%s)</i></h2>", territory.name(), nation.nick());
+        }
+    }
+
+
+    private String getMapLabel(Nation nation, float[] hsb) {
+        StringBuilder label = new StringBuilder();
+        label.append(getName(nation, hsb));
+
+        if (!nation.members().isEmpty()) {
             label.append("<b>Members</b><br>");
             label.append("<ul>");
 
-            for (UUID user : nation.members) {
+            for (UUID user : nation.members()) {
                 String username = getOfflinePlayer(user).getName();
-                if (user.equals(nation.ruler)) {
+                if (user.equals(nation.ruler())) {
                     label.append(format("<li><b>* %s</b></li><br>", username));
                 } else {
                     label.append(format("<li>* %s</li><br>", username));
