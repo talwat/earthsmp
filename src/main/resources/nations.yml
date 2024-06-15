@@ -9,9 +9,11 @@ nations:
     # (Required) An HSV hue from 0-360 that is used on the map
     # It's a hue to distinguish between different territories of the same nation
     color: 0
-    # (Required) The ruler of the nation. They just have permissions to add/remove members, and a few other small things
+    # (Optional) A full item to use as the flag.
+    flag: 'minecraft:white_banner{BlockEntityTag:{Patterns:[{Color:15,Pattern:"bt"}]}}'
+    # (Optional) The ruler of the nation. They just have permissions to add/remove members, and a few other small things
     ruler: a6d32a31-3507-4606-a165-215dab060651
-    # (Required) A list of people who have permissions in the whole nation, in UUID's
+    # (Optional) A list of people who have permissions in the whole nation, in UUID's
     # If you'd like, you can exclude all but leaders, and then give specific permissions in the territories
     members:
       - 88deebb7-e473-45ad-b51d-45b7f42ee5b1

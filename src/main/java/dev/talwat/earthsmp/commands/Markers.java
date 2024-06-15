@@ -147,27 +147,18 @@ class Markers extends SubCommand {
             return true;
         }
 
-        String tag = null;
-
         File file = new File(plugin.getDataFolder(), "markers.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        for (Nation nation : plugin.borders.nations.values()) {
-            if (nation.ruler() == null) {
-                continue;
-            }
-
-            if (nation.ruler().equals(player.getUniqueId())) {
-                tag = nation.tag();
-            }
-        }
-
-        if (tag == null) {
+        Nation nation = plugin.borders.getNationFromRuler(player.getUniqueId());
+        if (nation == null) {
             sender.sendPlainMessage("You have to be a ruler to manage markers!");
+
+            return true;
         }
 
         if (args[1].equals("list")) {
-            list(player, tag);
+            list(player, nation.tag());
 
             return true;
         }
@@ -175,8 +166,8 @@ class Markers extends SubCommand {
         List<Map<String, List<Map<String, Object>>>> markers = (List<Map<String, List<Map<String, Object>>>>) config.getList("markers");
 
         boolean result = switch (args[1]) {
-            case "new", "add" -> add(player, args, tag, markers);
-            case "delete", "remove" -> remove(player, args, tag, markers);
+            case "new", "add" -> add(player, args, nation.tag(), markers);
+            case "delete", "remove" -> remove(player, args, nation.tag(), markers);
             default -> false;
         };
 

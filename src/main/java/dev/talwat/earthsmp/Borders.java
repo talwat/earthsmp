@@ -4,6 +4,7 @@ import dev.talwat.earthsmp.nations.Nation;
 import dev.talwat.earthsmp.nations.NationsConfig;
 import dev.talwat.earthsmp.nations.Territory;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.Point;
 import xyz.jpenilla.squaremap.api.SimpleLayerProvider;
@@ -113,6 +114,16 @@ public class Borders {
         float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
 
         return plugin.borders.nations.get(Math.round(hsv[0] * 360));
+    }
+
+    public @Nullable Nation getNationFromRuler(UUID ruler) {
+        for (Nation nation : nations.values()) {
+            if (nation.ruler() != null && nation.ruler().equals(ruler)) {
+                return nation;
+            }
+        }
+
+        return null;
     }
 
     private String getName(Nation nation, float[] hsb) {
