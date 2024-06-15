@@ -66,7 +66,7 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
         }
 
         if (!this.members.isEmpty()) {
-            nation.put("members", this.members.stream().map(UUID::toString));
+            nation.put("members", this.members.stream().map(UUID::toString).toList());
         }
 
         return nation;
