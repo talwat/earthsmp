@@ -29,6 +29,7 @@ public final class Earthsmp extends JavaPlugin {
             inviteRequests = new HashMap<>();
             markers = new MapMarkers(this);
             news = new News(this);
+            Recipes.register(this);
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "An error occurred while loading!", e);
         }
