@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -19,6 +20,10 @@ public class Recipes {
         shulker();
         glowstone();
         basalt();
+        villagers();
+        blackstone();
+        warpedStem();
+        prismarine();
     }
 
     public static void rails() {
@@ -71,7 +76,7 @@ public class Recipes {
         ShapedRecipe glowstone = new ShapedRecipe(new NamespacedKey(plugin, "glowstone"), result);
 
         glowstone.shape("SSS", "STS", "SSS");
-        glowstone.setIngredient('S', Material.STICK);
+        glowstone.setIngredient('S', Material.CLAY);
         glowstone.setIngredient('T', Material.TORCH);
 
         getServer().addRecipe(glowstone);
@@ -86,5 +91,48 @@ public class Recipes {
         basalt.setIngredient('T', Material.COAL);
 
         getServer().addRecipe(basalt);
+    }
+
+    public static void villagers() {
+        ItemStack result = new ItemStack(Material.VILLAGER_SPAWN_EGG, 1);
+        ShapedRecipe villager = new ShapedRecipe(new NamespacedKey(plugin, "villager"), result);
+
+        villager.shape("STS", "TTT", "STS");
+        villager.setIngredient('S', Material.CHEST);
+        villager.setIngredient('T', Material.DIAMOND);
+
+        getServer().addRecipe(villager);
+    }
+
+    public static void blackstone() {
+        ItemStack result = new ItemStack(Material.BLACKSTONE, 1);
+        ShapedRecipe blackstone = new ShapedRecipe(new NamespacedKey(plugin, "blackstone"), result);
+
+        blackstone.shape("SSS", "STS", "SSS");
+        blackstone.setIngredient('S', Material.STONE);
+        blackstone.setIngredient('T', Material.COAL);
+
+        getServer().addRecipe(blackstone);
+    }
+
+    public static void warpedStem() {
+        ItemStack result = new ItemStack(Material.WARPED_STEM, 1);
+        ShapelessRecipe warpedStem = new ShapelessRecipe(new NamespacedKey(plugin, "warpedstem"), result);
+
+        warpedStem.addIngredient(Material.OAK_LOG);
+        warpedStem.addIngredient(Material.WHEAT_SEEDS);
+
+        getServer().addRecipe(warpedStem);
+    }
+
+    public static void prismarine() {
+        ItemStack result = new ItemStack(Material.DARK_PRISMARINE, 32);
+        ShapedRecipe prismarine = new ShapedRecipe(new NamespacedKey(plugin, "prismarine"), result);
+
+        prismarine.shape("SSS", "STS", "SSS");
+        prismarine.setIngredient('S', Material.COBBLESTONE);
+        prismarine.setIngredient('T', Material.IRON_INGOT);
+
+        getServer().addRecipe(prismarine);
     }
 }
