@@ -47,7 +47,7 @@ public class MapMarkers {
         var entry = first.get();
 
         if (entry.getValue() == null) {
-            return null;
+            entry.setValue(new ArrayList<>());
         }
 
         return entry;

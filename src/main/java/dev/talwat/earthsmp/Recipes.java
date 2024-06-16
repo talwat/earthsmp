@@ -17,7 +17,8 @@ public class Recipes {
         saddle();
         rootedDirt();
         shulker();
-        copper();
+        glowstone();
+        basalt();
     }
 
     public static void rails() {
@@ -45,7 +46,7 @@ public class Recipes {
     }
 
     public static void rootedDirt() {
-        ItemStack result = new ItemStack(Material.ROOTED_DIRT);
+        ItemStack result = new ItemStack(Material.ROOTED_DIRT, 16);
         ShapedRecipe dirt = new ShapedRecipe(new NamespacedKey(plugin, "dirt"), result);
 
         dirt.shape("DDD", "DDD", "DDD");
@@ -56,23 +57,34 @@ public class Recipes {
 
     public static void shulker() {
         ItemStack result = new ItemStack(Material.SHULKER_SHELL);
-        ShapedRecipe shell = new ShapedRecipe(new NamespacedKey(plugin, "shulker"), result);
+        ShapedRecipe shulker = new ShapedRecipe(new NamespacedKey(plugin, "shulker"), result);
 
-        shell.shape("   ", "PDP", "   ");
-        shell.setIngredient('D', Material.DIAMOND);
-        shell.setIngredient('P', Material.PURPLE_DYE);
+        shulker.shape("   ", "PDP", "   ");
+        shulker.setIngredient('D', Material.DIAMOND);
+        shulker.setIngredient('P', Material.PURPLE_DYE);
 
-        getServer().addRecipe(shell);
+        getServer().addRecipe(shulker);
     }
 
-    public static void copper() {
-        ItemStack result = new ItemStack(Material.RAW_COPPER, 16);
-        ShapedRecipe copper = new ShapedRecipe(new NamespacedKey(plugin, "copper"), result);
+    public static void glowstone() {
+        ItemStack result = new ItemStack(Material.GLOWSTONE, 16);
+        ShapedRecipe glowstone = new ShapedRecipe(new NamespacedKey(plugin, "glowstone"), result);
 
-        copper.shape("III", "IBI", "III");
-        copper.setIngredient('I', Material.COAL);
-        copper.setIngredient('B', Material.BLAZE_POWDER);
+        glowstone.shape("SSS", "STS", "SSS");
+        glowstone.setIngredient('S', Material.STICK);
+        glowstone.setIngredient('T', Material.TORCH);
 
-        getServer().addRecipe(copper);
+        getServer().addRecipe(glowstone);
+    }
+
+    public static void basalt() {
+        ItemStack result = new ItemStack(Material.BASALT, 16);
+        ShapedRecipe basalt = new ShapedRecipe(new NamespacedKey(plugin, "basalt"), result);
+
+        basalt.shape("SSS", "STS", "SSS");
+        basalt.setIngredient('S', Material.COBBLESTONE);
+        basalt.setIngredient('T', Material.COAL);
+
+        getServer().addRecipe(basalt);
     }
 }

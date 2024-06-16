@@ -48,7 +48,7 @@ class Markers extends SubCommand {
         }
     }
 
-    private boolean add(@NotNull Player player, @NotNull String[] args, String tag, List<Map<String, List<Map<String, Object>>>> markers) {
+    private boolean add(@NotNull Player player, @NotNull String[] args, String tag, List<Map<String, List<Map<String, Object>>>> markers, boolean recursed) {
         Nation nation = plugin.borders.getNationFromLocation(player.getLocation());
         if (nation == null || !nation.tag().equals(tag)) {
             player.sendPlainMessage("You can't make a marker outside your own territory!");
@@ -64,18 +64,23 @@ class Markers extends SubCommand {
         for (Map<String, List<Map<String, Object>>> nationMarkers : markers) {
             if (checkAddition(nationMarkers, args, tag, player)) {
                 player.sendPlainMessage("Added marker!");
-
                 return true;
             }
         }
 
+        if (recursed) {
+            player.sendPlainMessage("A marker section was created, but it still couldn't be found.");
+            player.sendPlainMessage("In other words, the plugin is fucked lol.");
+
+            return true;
+        }
+
         Map<String, List<Map<String, Object>>> newEntry = new LinkedHashMap<>();
         newEntry.put(tag, null);
-
         markers.add(newEntry);
-        checkAddition(newEntry, args, tag, player);
 
-        player.sendPlainMessage("Created new marker section & added marker!");
+        player.sendPlainMessage("Created new marker section.");
+        add(player, args, tag, markers, true);
 
         return true;
     }
@@ -164,12 +169,19 @@ class Markers extends SubCommand {
         }
 
         List<Map<String, List<Map<String, Object>>>> markers = (List<Map<String, List<Map<String, Object>>>>) config.getList("markers");
+        if (markers == null) {
+            markers = new ArrayList<>();
+        }
 
         boolean result = switch (args[1]) {
-            case "new", "add" -> add(player, args, nation.tag(), markers);
+            case "new", "add" -> add(player, args, nation.tag(), markers, false);
             case "delete", "remove" -> remove(player, args, nation.tag(), markers);
             default -> false;
         };
+
+        config.set("markers", markers);
+
+        plugin.getLogger().info(format("save: %s, %s", markers, config));
 
         try {
             config.save(file);
