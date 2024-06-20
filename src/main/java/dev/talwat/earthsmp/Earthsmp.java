@@ -36,6 +36,7 @@ public final class Earthsmp extends JavaPlugin {
 
         getLogger().info("EarthSMP plugin loaded!");
         getServer().getPluginManager().registerEvents(new EventListener(this), this);
+        getServer().getPluginManager().registerEvents(new VehicleEventListener(), this);
         Objects.requireNonNull(getCommand("earth")).setExecutor(new Handler(this));
     }
 

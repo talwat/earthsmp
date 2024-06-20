@@ -11,11 +11,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.vehicle.*;
 
 import java.util.Map;
 
@@ -31,11 +33,14 @@ public class EventListener implements Listener {
     private boolean isAllowed(Location pos, Player player) {
         Nation nation = plugin.borders.getNationFromLocation(pos);
 
-        if (nation == null || nation.members().contains(player.getUniqueId())) {
+        if (nation == null || (player != null && nation.members().contains(player.getUniqueId()))) {
             return true;
         }
 
-        player.sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick()));
+        if (player != null) {
+            player.sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick()));
+        }
+
         return false;
     }
 
@@ -58,8 +63,13 @@ public class EventListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onBlock(PlayerInteractEvent event) {
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onInteract(PlayerInteractEvent event) {
+        if (event.useItemInHand() == Event.Result.ALLOW) {
+            plugin.getLogger().info("Allowed!");
+            return;
+        }
+
         Block interacted = event.getClickedBlock();
         if (interacted == null) {
             return;
@@ -72,6 +82,11 @@ public class EventListener implements Listener {
         }
 
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onExplosion(EntityExplodeEvent event) {
+        event.blockList().clear();
     }
 
     @EventHandler
