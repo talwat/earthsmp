@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static java.lang.String.format;
 
-class List extends SubCommand {
-    public List(Earthsmp plugin) {
+class PlayerList extends SubCommand {
+    public PlayerList(Earthsmp plugin) {
         super(plugin);
     }
 
