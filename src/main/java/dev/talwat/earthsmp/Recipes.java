@@ -24,6 +24,8 @@ public class Recipes {
         blackstone();
         warpedStem();
         prismarine();
+        blaze();
+        seaLantern();
     }
 
     public static void rails() {
@@ -64,7 +66,7 @@ public class Recipes {
         ItemStack result = new ItemStack(Material.SHULKER_SHELL);
         ShapedRecipe shulker = new ShapedRecipe(new NamespacedKey(plugin, "shulker"), result);
 
-        shulker.shape("   ", "PDP", "   ");
+        shulker.shape("PDP");
         shulker.setIngredient('D', Material.DIAMOND);
         shulker.setIngredient('P', Material.PURPLE_DYE);
 
@@ -76,7 +78,7 @@ public class Recipes {
         ShapedRecipe glowstone = new ShapedRecipe(new NamespacedKey(plugin, "glowstone"), result);
 
         glowstone.shape("SSS", "STS", "SSS");
-        glowstone.setIngredient('S', Material.CLAY);
+        glowstone.setIngredient('S', Material.CLAY_BALL);
         glowstone.setIngredient('T', Material.TORCH);
 
         getServer().addRecipe(glowstone);
@@ -134,5 +136,28 @@ public class Recipes {
         prismarine.setIngredient('T', Material.IRON_INGOT);
 
         getServer().addRecipe(prismarine);
+    }
+
+    public static void blaze() {
+        ItemStack result = new ItemStack(Material.BLAZE_ROD, 2);
+        ShapedRecipe blaze = new ShapedRecipe(new NamespacedKey(plugin, "blaze"), result);
+
+        blaze.shape("G", "S", "C");
+        blaze.setIngredient('C', Material.COAL);
+        blaze.setIngredient('S', Material.STICK);
+        blaze.setIngredient('G', Material.GUNPOWDER);
+
+        getServer().addRecipe(blaze);
+    }
+
+    public static void seaLantern() {
+        ItemStack result = new ItemStack(Material.SEA_LANTERN, 1);
+        ShapedRecipe lantern = new ShapedRecipe(new NamespacedKey(plugin, "sealantern"), result);
+
+        lantern.shape("SI", "IS");
+        lantern.setIngredient('I', Material.IRON_INGOT);
+        lantern.setIngredient('S', Material.GLOW_INK_SAC);
+
+        getServer().addRecipe(lantern);
     }
 }

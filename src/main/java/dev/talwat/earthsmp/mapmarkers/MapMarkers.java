@@ -89,8 +89,8 @@ public class MapMarkers {
         for (Map.Entry<String, List<MapMarker>> entry : markers.entrySet()) {
             for (MapMarker mapMarker : entry.getValue()) {
                 Point point = Point.of(mapMarker.pos().getBlockX(), mapMarker.pos().getBlockZ());
-                Marker marker = Marker.icon(point, Key.key(mapMarker.type().toString()), 16);
-                marker.markerOptions(MarkerOptions.builder().hoverTooltip(mapMarker.label()));
+                Marker marker = Marker.icon(point, Key.key(mapMarker.type().toString()), 24);
+                marker.markerOptions(MarkerOptions.builder().hoverTooltip(format("<h2>%s</h2>", mapMarker.label())));
 
                 layerProvider.addMarker(Key.key(format("marker_%d", i)), marker);
 
