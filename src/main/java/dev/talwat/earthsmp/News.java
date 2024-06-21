@@ -57,7 +57,7 @@ public class News {
 
         unsorted.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
-                .forEach(entry -> articles.put(entry.getKey(), entry.getValue()));
+                .forEach(entry -> articles.put(entry.getKey(), entry.getValue().trim()));
 
         current = null;
 
