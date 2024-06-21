@@ -26,6 +26,9 @@ public class Recipes {
         prismarine();
         blaze();
         seaLantern();
+        web();
+        soulsand();
+        calcite();
     }
 
     public static void rails() {
@@ -159,5 +162,37 @@ public class Recipes {
         lantern.setIngredient('S', Material.GLOW_INK_SAC);
 
         getServer().addRecipe(lantern);
+    }
+
+    public static void web() {
+        ItemStack result = new ItemStack(Material.COBWEB, 1);
+        ShapedRecipe web = new ShapedRecipe(new NamespacedKey(plugin, "web"), result);
+
+        web.shape("S S", " S ", "S S");
+        web.setIngredient('S', Material.STRING);
+
+        getServer().addRecipe(web);
+    }
+
+    public static void soulsand() {
+        ItemStack result = new ItemStack(Material.SOUL_SAND, 1);
+        ShapedRecipe soulsand = new ShapedRecipe(new NamespacedKey(plugin, "soulsand"), result);
+
+        soulsand.shape(" S ", "SRS", " S ");
+        soulsand.setIngredient('S', Material.SAND);
+        soulsand.setIngredient('R', Material.REDSTONE);
+
+        getServer().addRecipe(soulsand);
+    }
+
+    public static void calcite() {
+        ItemStack result = new ItemStack(Material.CALCITE, 16);
+        ShapedRecipe calcite = new ShapedRecipe(new NamespacedKey(plugin, "calcite"), result);
+
+        calcite.shape("SSS", "SMS", "SSS");
+        calcite.setIngredient('S', Material.COBBLESTONE);
+        calcite.setIngredient('M', Material.BONE_MEAL);
+
+        getServer().addRecipe(calcite);
     }
 }
