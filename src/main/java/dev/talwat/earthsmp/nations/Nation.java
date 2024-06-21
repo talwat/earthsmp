@@ -9,7 +9,7 @@ import java.util.*;
 import static dev.talwat.earthsmp.nations.NationsConfig.getUUIDs;
 
 public record Nation(@NotNull String tag, @NotNull String name, @NotNull String nick, int hue, @Nullable UUID ruler,
-                     @Nullable String flag, @NotNull List<UUID> members,
+                     @Nullable String flag, @Nullable String master, @NotNull List<UUID> members,
                      @Nullable Map<Integer, Territory> territories) implements ConfigurationSerializable {
 
     public static Nation deserialize(Map<String, Object> args) {
@@ -45,6 +45,7 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
                 (int) args.get("color"),
                 ruler,
                 (String) args.get("flag"),
+                (String) args.get("master"),
                 uuids,
                 territories
         );
@@ -63,6 +64,10 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
 
         if (this.flag != null) {
             nation.put("flag", flag);
+        }
+
+        if (this.master != null) {
+            nation.put("master", master);
         }
 
         if (!this.members.isEmpty()) {

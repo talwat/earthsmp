@@ -126,8 +126,24 @@ public class Borders {
         return null;
     }
 
+    public @Nullable Nation getNationFromTag(String tag) {
+        for (Nation nation : nations.values()) {
+            if (nation.tag().equals(tag)) {
+                return nation;
+            }
+        }
+
+        return null;
+    }
+
     private String getName(Nation nation, float[] hsb) {
         String base = format("<h2>%s</h2>", nation.nick());
+        if (nation.master() != null) {
+            Nation master = getNationFromTag(nation.master());
+            if (master != null) {
+                base = format("<h2>%s (Puppet of %s)</h2>", nation.nick(), master.nick());
+            }
+        }
 
         if (nation.territories() == null) {
             return base;
