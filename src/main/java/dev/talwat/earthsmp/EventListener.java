@@ -11,15 +11,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.event.*;
-import org.bukkit.event.block.Action;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.vehicle.*;
-
-import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -92,22 +90,8 @@ public class EventListener implements Listener {
     @EventHandler
     public void onChat(AsyncChatEvent event) {
         event.renderer((source, sourceDisplayName, message, viewer) -> {
-            if (!plugin.borders.playerCache.containsKey(source.getUniqueId())) {
-                plugin.borders.playerCache.put(source.getUniqueId(), null);
-
-                for (Map.Entry<Integer, Nation> nation : plugin.borders.nations.entrySet()) {
-                    if (nation.getValue().members().contains(source.getUniqueId())) {
-                        plugin.borders.playerCache.put(source.getUniqueId(), nation.getValue());
-
-                        break;
-                    }
-                }
-            }
-
-            plugin.getLogger().info(format("%s", plugin.borders.playerCache));
-
             Component prefix;
-            Nation nation = plugin.borders.playerCache.get(source.getUniqueId());
+            Nation nation = plugin.borders.cache.playerToNation(source);
             if (nation == null) {
                 prefix = Component.text("[Uncivilized]");
             } else {

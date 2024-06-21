@@ -28,7 +28,7 @@ public class Borders {
     private final Earthsmp plugin;
     // The key is also the `hue` value.
     public Map<Integer, Nation> nations;
-    public Map<UUID, Nation> playerCache;
+    public Cache cache;
     private BufferedImage image;
 
     public Borders(Earthsmp plugin) {
@@ -48,7 +48,7 @@ public class Borders {
     public void Load() {
         loadImage();
         loadNations();
-        this.playerCache = new HashMap<>();
+        this.cache = new Cache(this);
 
         if (this.image == null || this.nations == null) {
             return;
@@ -160,7 +160,6 @@ public class Borders {
             return format("<h2>%s <i>(%s)</i></h2>", territory.name(), nation.nick());
         }
     }
-
 
     private String getMapLabel(Nation nation, float[] hsb) {
         StringBuilder label = new StringBuilder();
