@@ -3,7 +3,13 @@ package dev.talwat.earthsmp;
 import dev.talwat.earthsmp.nations.Nation;
 import dev.talwat.earthsmp.nations.NationsConfig;
 import dev.talwat.earthsmp.nations.Territory;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.jpenilla.squaremap.api.Key;
 import xyz.jpenilla.squaremap.api.Point;
@@ -23,6 +29,7 @@ import static dev.talwat.earthsmp.ContourTracing.IsGrayScale;
 import static dev.talwat.earthsmp.Squaremap.SetupLayerProvider;
 import static java.lang.String.format;
 import static org.bukkit.Bukkit.getOfflinePlayer;
+import static org.bukkit.Bukkit.getServer;
 
 public class Borders {
     private final Earthsmp plugin;
@@ -48,7 +55,11 @@ public class Borders {
     public void Load() {
         loadImage();
         loadNations();
+
         this.cache = new Cache(this);
+        for (Player player : getServer().getOnlinePlayers()) {
+            player.playerListName(formatUsername(player, null));
+        }
 
         if (this.image == null || this.nations == null) {
             return;
@@ -182,6 +193,24 @@ public class Borders {
         }
 
         return label.toString();
+    }
+
+    public @NotNull Component formatUsername(Player player, @Nullable Component name) {
+        net.kyori.adventure.text.Component prefix;
+        Nation nation = cache.playerToNation(player);
+        if (nation == null) {
+            prefix = net.kyori.adventure.text.Component.text("[Uncivilized]");
+        } else {
+            prefix = net.kyori.adventure.text.Component.text('[', Style.empty()).
+                    append(net.kyori.adventure.text.Component.text(nation.nick(), TextColor.color(HSVLike.hsvLike(nation.hue() / 360.0f, 0.75f, 1f))))
+                    .append(net.kyori.adventure.text.Component.text(']', Style.empty()));
+        }
+
+        if (name == null) {
+            name = player.name();
+        }
+
+        return prefix.appendSpace().append(name);
     }
 
     private void loadImage() {

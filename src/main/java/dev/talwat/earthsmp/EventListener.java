@@ -3,9 +3,7 @@ package dev.talwat.earthsmp;
 import dev.talwat.earthsmp.nations.Nation;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -18,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import static java.lang.String.format;
 
@@ -90,17 +89,14 @@ public class EventListener implements Listener {
     @EventHandler
     public void onChat(AsyncChatEvent event) {
         event.renderer((source, sourceDisplayName, message, viewer) -> {
-            Component prefix;
-            Nation nation = plugin.borders.cache.playerToNation(source);
-            if (nation == null) {
-                prefix = Component.text("[Uncivilized]");
-            } else {
-                prefix = Component.text('[', Style.empty()).
-                        append(Component.text(nation.nick(), TextColor.color(HSVLike.hsvLike(nation.hue() / 360.0f, 0.75f, 1f))))
-                        .append(Component.text(']', Style.empty()));
-            }
-
-            return prefix.appendSpace().append(sourceDisplayName).append(Component.text(": ")).append(message);
+            Component prefix = plugin.borders.formatUsername(source, sourceDisplayName);
+            return prefix.append(Component.text(": ")).append(message);
         });
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().playerListName(plugin.borders.formatUsername(event.getPlayer(), null));
+        event.getPlayer().sendPlayerListHeader(Component.text("Talwat's Earth SMP!\nPlugin Version:").appendSpace().append(Component.text(plugin.getPluginMeta().getVersion(), TextColor.color(60, 248, 100))));
     }
 }

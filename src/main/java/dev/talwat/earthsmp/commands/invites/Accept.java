@@ -1,5 +1,6 @@
 package dev.talwat.earthsmp.commands.invites;
 
+import dev.talwat.earthsmp.Borders;
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.InviteRequest;
 import dev.talwat.earthsmp.commands.SubCommand;
@@ -28,6 +29,16 @@ public class Accept extends SubCommand {
             return true;
         }
 
+        if (args.length <= 1) {
+            return false;
+        }
+
+        if (plugin.borders.cache.playerToNation(player) != null) {
+            sender.sendPlainMessage("You're already part of another nation!");
+            sender.sendPlainMessage("Leave it first before joining another.");
+            return true;
+        }
+
         InviteRequest invite = plugin.inviteRequests.get(player.getUniqueId());
 
         if (invite == null) {
@@ -35,7 +46,8 @@ public class Accept extends SubCommand {
 
             return true;
         } else if (!Objects.equals(invite.nation, args[1])) {
-            sender.sendPlainMessage("Nation didn't match.");
+            sender.sendPlainMessage("Nation didn't match!");
+            sender.sendPlainMessage(format("Make sure you're using the correct tag, in this case, %s.", invite.nation));
 
             return true;
         }
@@ -54,7 +66,7 @@ public class Accept extends SubCommand {
             ruler.sendPlainMessage(format("%s has joined %s!", player.getName(), nationName));
         }
 
-        plugin.borders.loadNations();
+        plugin.borders = new Borders(plugin);
         config.Save(plugin);
 
         return true;

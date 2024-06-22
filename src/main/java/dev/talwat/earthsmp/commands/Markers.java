@@ -40,7 +40,14 @@ class Markers extends SubCommand {
                 }
             }
 
-            entry.getValue().add(new MapMarker(args[2], MapMarkerType.valueOf(args[3]), player.getLocation()).serialize());
+            MapMarkerType type;
+            try {
+                type = MapMarkerType.valueOf(args[3]);
+            } catch (IllegalArgumentException e) {
+                type = MapMarkerType.other;
+            }
+
+            entry.getValue().add(new MapMarker(args[2].replace("_", " "), type, player.getLocation()).serialize());
 
             return true;
         } else {
@@ -56,6 +63,9 @@ class Markers extends SubCommand {
         }
 
         if (args.length <= 3) {
+            return false;
+        } else if (args.length > 4) {
+            player.sendPlainMessage("You were probably trying to make a marker with spaces in the label, but you need to use underscores instead.");
             return false;
         }
 
@@ -116,8 +126,6 @@ class Markers extends SubCommand {
 
                 return true;
             }
-
-            plugin.getLogger().info(format("%s", entry));
         }
 
         player.sendPlainMessage("You haven't made any markers yet.");
@@ -180,8 +188,6 @@ class Markers extends SubCommand {
         };
 
         config.set("markers", markers);
-
-        plugin.getLogger().info(format("save: %s, %s", markers, config));
 
         try {
             config.save(file);
