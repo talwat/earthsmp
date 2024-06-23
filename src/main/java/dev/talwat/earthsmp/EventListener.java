@@ -99,6 +99,10 @@ public class EventListener implements Listener {
         event.getPlayer().playerListName(plugin.borders.formatUsername(event.getPlayer(), null));
         event.getPlayer().sendPlayerListHeader(Component.text("Talwat's Earth SMP!\nPlugin Version:").appendSpace().append(Component.text(plugin.getPluginMeta().getVersion(), TextColor.color(60, 248, 100))));
         event.getPlayer().setScoreboard(plugin.borders.scoreboard);
-        plugin.borders.teams.get(plugin.borders.cache.playerToNation(event.getPlayer()).tag()).addPlayer(event.getPlayer());
+
+        Nation nation = plugin.borders.cache.playerToNation(event.getPlayer());
+        if (nation != null) {
+            plugin.borders.teams.get(nation.tag()).addPlayer(event.getPlayer());
+        }
     }
 }
