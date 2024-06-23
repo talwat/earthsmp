@@ -7,8 +7,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.util.HSVLike;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.jpenilla.squaremap.api.Key;
@@ -36,6 +39,8 @@ public class Borders {
     // The key is also the `hue` value.
     public Map<Integer, Nation> nations;
     public Cache cache;
+    public Scoreboard scoreboard;
+    public Map<String, Team> teams;
     private BufferedImage image;
 
     public Borders(Earthsmp plugin) {
@@ -57,8 +62,29 @@ public class Borders {
         loadNations();
 
         this.cache = new Cache(this);
+        this.teams = new HashMap<>();
+
+        if (scoreboard == null) {
+            scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        }
+
+        for (Nation nation : nations.values()) {
+            Team team;
+            try {
+                team = scoreboard.registerNewTeam(nation.tag());
+            } catch (Exception e) {
+                team = scoreboard.getTeam(nation.tag());
+                for (String entry : team.getEntries()) {
+                    team.removeEntries(entry);
+                }
+            }
+
+            teams.put(nation.tag(), team);
+        }
+
         for (Player player : getServer().getOnlinePlayers()) {
             player.playerListName(formatUsername(player, null));
+            teams.get(cache.playerToNation(player).tag()).addPlayer(player);
         }
 
         if (this.image == null || this.nations == null) {
@@ -83,7 +109,7 @@ public class Borders {
                 filtered.add(p);
             }
 
-            Nation nation = nations.get(Math.round(hsb[0] * 360));
+            Nation nation = getByHue(hsb[0]);
 
             if (nation == null) {
                 continue;
@@ -124,7 +150,7 @@ public class Borders {
 
         float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
 
-        return plugin.borders.nations.get(Math.round(hsv[0] * 360));
+        return plugin.borders.getByHue(hsv[0]);
     }
 
     public @Nullable Nation getNationFromRuler(UUID ruler) {
@@ -145,6 +171,16 @@ public class Borders {
         }
 
         return null;
+    }
+
+    public Nation getByHue(float hue) {
+        Nation cieled = nations.get((int) Math.ceil(hue * 360.0));
+        if (cieled != null) {
+            return cieled;
+        }
+
+        Nation floored = nations.get((int) Math.floor(hue * 360.0));
+        return floored;
     }
 
     private String getName(Nation nation, float[] hsb) {

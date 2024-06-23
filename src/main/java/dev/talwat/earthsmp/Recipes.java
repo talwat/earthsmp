@@ -29,6 +29,9 @@ public class Recipes {
         web();
         soulsand();
         calcite();
+        quartz();
+        stonebricks();
+        brick();
     }
 
     public static void rails() {
@@ -110,7 +113,7 @@ public class Recipes {
     }
 
     public static void blackstone() {
-        ItemStack result = new ItemStack(Material.BLACKSTONE, 1);
+        ItemStack result = new ItemStack(Material.BLACKSTONE, 8);
         ShapedRecipe blackstone = new ShapedRecipe(new NamespacedKey(plugin, "blackstone"), result);
 
         blackstone.shape("SSS", "STS", "SSS");
@@ -128,6 +131,36 @@ public class Recipes {
         warpedStem.addIngredient(Material.WHEAT_SEEDS);
 
         getServer().addRecipe(warpedStem);
+    }
+
+    public static void brick() {
+        ItemStack result = new ItemStack(Material.BRICK, 16);
+        ShapelessRecipe brick = new ShapelessRecipe(new NamespacedKey(plugin, "brick"), result);
+
+        brick.addIngredient(Material.CLAY_BALL);
+        brick.addIngredient(Material.CLAY_BALL);
+
+        getServer().addRecipe(brick);
+    }
+
+    public static void quartz() {
+        ItemStack result = new ItemStack(Material.QUARTZ, 9);
+        ShapelessRecipe quartz = new ShapelessRecipe(new NamespacedKey(plugin, "quartz"), result);
+
+        quartz.addIngredient(Material.QUARTZ_BLOCK);
+
+        getServer().addRecipe(quartz);
+    }
+
+    public static void stonebricks() {
+        ItemStack result = new ItemStack(Material.STONE_BRICKS, 18);
+        ShapedRecipe stonebricks = new ShapedRecipe(new NamespacedKey(plugin, "stonebricks"), result);
+
+        stonebricks.shape("SSS", "SBS", "SSS");
+        stonebricks.setIngredient('S', Material.COBBLESTONE);
+        stonebricks.setIngredient('B', Material.BRICK);
+
+        getServer().addRecipe(stonebricks);
     }
 
     public static void prismarine() {
@@ -175,7 +208,7 @@ public class Recipes {
     }
 
     public static void soulsand() {
-        ItemStack result = new ItemStack(Material.SOUL_SAND, 1);
+        ItemStack result = new ItemStack(Material.SOUL_SAND, 4);
         ShapedRecipe soulsand = new ShapedRecipe(new NamespacedKey(plugin, "soulsand"), result);
 
         soulsand.shape(" S ", "SRS", " S ");
