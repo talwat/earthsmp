@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -41,29 +42,31 @@ public class EventListener implements Listener {
         return false;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getEntityType() == EntityType.PLAYER || event.getEntity() instanceof Monster) {
+            event.setCancelled(false);
             return;
         }
 
         if (event.getDamager().getType() != EntityType.PLAYER) {
+            event.setCancelled(false);
             return;
         }
 
         Player player = ((Player) event.getDamager());
 
         if (isAllowed(event.getEntity().getLocation(), player)) {
+            event.setCancelled(false);
             return;
         }
 
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.useItemInHand() == Event.Result.ALLOW) {
-            plugin.getLogger().info("Allowed!");
             return;
         }
 
@@ -84,6 +87,11 @@ public class EventListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onExplosion(EntityExplodeEvent event) {
         event.blockList().clear();
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onEat(FoodLevelChangeEvent event) {
+        event.setCancelled(false);
     }
 
     @EventHandler

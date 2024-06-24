@@ -84,7 +84,10 @@ public class Borders {
 
         for (Player player : getServer().getOnlinePlayers()) {
             player.playerListName(formatUsername(player, null));
-            teams.get(cache.playerToNation(player).tag()).addPlayer(player);
+            Nation nation = cache.playerToNation(player);
+            if (nation != null) {
+                teams.get(nation.tag()).addPlayer(player);
+            }
         }
 
         if (this.image == null || this.nations == null) {
