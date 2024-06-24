@@ -33,7 +33,7 @@ public class Accept extends SubCommand {
             return false;
         }
 
-        if (plugin.borders.cache.playerToNation(player) != null) {
+        if (plugin.borders.getFromCache(player) != null) {
             sender.sendPlainMessage("You're already part of another nation!");
             sender.sendPlainMessage("Leave it first before joining another.");
             return true;

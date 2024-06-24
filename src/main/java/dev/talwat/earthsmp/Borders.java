@@ -34,13 +34,38 @@ import static java.lang.String.format;
 import static org.bukkit.Bukkit.getOfflinePlayer;
 import static org.bukkit.Bukkit.getServer;
 
+class Cache {
+    private final Map<UUID, Nation> playerToNation;
+    private final Borders borders;
+
+    public Cache(Borders borders) {
+        this.borders = borders;
+        this.playerToNation = new HashMap<>();
+    }
+
+    public Nation playerToNation(Player player) {
+        if (!playerToNation.containsKey(player.getUniqueId())) {
+            playerToNation.put(player.getUniqueId(), null);
+
+            for (Nation nation : borders.nations.values()) {
+                if (nation.members().contains(player.getUniqueId())) {
+                    playerToNation.put(player.getUniqueId(), nation);
+                    break;
+                }
+            }
+        }
+
+        return playerToNation.get(player.getUniqueId());
+    }
+}
+
 public class Borders {
     private final Earthsmp plugin;
     // The key is also the `hue` value.
     public Map<Integer, Nation> nations;
-    public Cache cache;
     public Scoreboard scoreboard;
     public Map<String, Team> teams;
+    private Cache cache;
     private BufferedImage image;
 
     public Borders(Earthsmp plugin) {
@@ -60,6 +85,10 @@ public class Borders {
     public void Load() {
         loadImage();
         loadNations();
+
+        if (this.image == null || this.nations == null) {
+            return;
+        }
 
         this.cache = new Cache(this);
         this.teams = new HashMap<>();
@@ -90,10 +119,6 @@ public class Borders {
             }
         }
 
-        if (this.image == null || this.nations == null) {
-            return;
-        }
-
         HashMap<Color, List<java.awt.Point>> boundaries = Shapes.TraceShapes(image);
         SimpleLayerProvider layerProvider = SetupLayerProvider("Borders", "borders");
         if (layerProvider == null) {
@@ -112,7 +137,7 @@ public class Borders {
                 filtered.add(p);
             }
 
-            Nation nation = getByHue(hsb[0]);
+            Nation nation = get(hsb[0]);
 
             if (nation == null) {
                 continue;
@@ -144,7 +169,7 @@ public class Borders {
         this.nations = nations;
     }
 
-    public Nation getNationFromLocation(Location pos) {
+    public @Nullable Nation get(Location pos) {
         Color color = plugin.borders.getColor(pos.toBlockLocation());
 
         if (IsGrayScale(color) || color.getAlpha() == 0) {
@@ -153,10 +178,14 @@ public class Borders {
 
         float[] hsv = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
 
-        return plugin.borders.getByHue(hsv[0]);
+        return plugin.borders.get(hsv[0]);
     }
 
-    public @Nullable Nation getNationFromRuler(UUID ruler) {
+    public @Nullable Nation getFromCache(Player player) {
+        return cache.playerToNation(player);
+    }
+
+    public @Nullable Nation get(UUID ruler) {
         for (Nation nation : nations.values()) {
             if (nation.ruler() != null && nation.ruler().equals(ruler)) {
                 return nation;
@@ -166,7 +195,7 @@ public class Borders {
         return null;
     }
 
-    public @Nullable Nation getNationFromTag(String tag) {
+    public @Nullable Nation get(String tag) {
         for (Nation nation : nations.values()) {
             if (nation.tag().equals(tag)) {
                 return nation;
@@ -176,10 +205,10 @@ public class Borders {
         return null;
     }
 
-    public Nation getByHue(float hue) {
-        Nation cieled = nations.get((int) Math.ceil(hue * 360.0));
-        if (cieled != null) {
-            return cieled;
+    public Nation get(float hue) {
+        Nation ceiled = nations.get((int) Math.ceil(hue * 360.0));
+        if (ceiled != null) {
+            return ceiled;
         }
 
         Nation floored = nations.get((int) Math.floor(hue * 360.0));
@@ -189,7 +218,7 @@ public class Borders {
     private String getName(Nation nation, float[] hsb) {
         String base = format("<h2>%s</h2>", nation.nick());
         if (nation.master() != null) {
-            Nation master = getNationFromTag(nation.master());
+            Nation master = get(nation.master());
             if (master != null) {
                 base = format("<h2>%s (Puppet of %s)</h2>", nation.nick(), master.nick());
             }

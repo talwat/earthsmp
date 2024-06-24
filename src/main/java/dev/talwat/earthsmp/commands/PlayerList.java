@@ -21,7 +21,7 @@ class PlayerList extends SubCommand {
             return true;
         }
 
-        Nation nation = plugin.borders.cache.playerToNation(player);
+        Nation nation = plugin.borders.getFromCache(player);
         if (nation == null) {
             sender.sendPlainMessage("You aren't part of a nation!");
 

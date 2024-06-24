@@ -56,7 +56,7 @@ class Markers extends SubCommand {
     }
 
     private boolean add(@NotNull Player player, @NotNull String[] args, String tag, List<Map<String, List<Map<String, Object>>>> markers, boolean recursed) {
-        Nation nation = plugin.borders.getNationFromLocation(player.getLocation());
+        Nation nation = plugin.borders.get(player.getLocation());
         if (nation == null || !nation.tag().equals(tag)) {
             player.sendPlainMessage("You can't make a marker outside your own territory!");
             return true;
@@ -163,7 +163,7 @@ class Markers extends SubCommand {
         File file = new File(plugin.getDataFolder(), "markers.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        Nation nation = plugin.borders.getNationFromRuler(player.getUniqueId());
+        Nation nation = plugin.borders.get(player.getUniqueId());
         if (nation == null) {
             sender.sendPlainMessage("You have to be a ruler to manage markers!");
 

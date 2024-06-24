@@ -29,7 +29,7 @@ public class EventListener implements Listener {
     }
 
     private boolean isAllowed(Location pos, Player player) {
-        Nation nation = plugin.borders.getNationFromLocation(pos);
+        Nation nation = plugin.borders.get(pos);
 
         if (nation == null || (player != null && nation.members().contains(player.getUniqueId()))) {
             return true;
@@ -108,7 +108,7 @@ public class EventListener implements Listener {
         event.getPlayer().sendPlayerListHeader(Component.text("Talwat's Earth SMP!\nPlugin Version:").appendSpace().append(Component.text(plugin.getPluginMeta().getVersion(), TextColor.color(60, 248, 100))));
         event.getPlayer().setScoreboard(plugin.borders.scoreboard);
 
-        Nation nation = plugin.borders.cache.playerToNation(event.getPlayer());
+        Nation nation = plugin.borders.getFromCache(event.getPlayer());
         if (nation != null) {
             plugin.borders.teams.get(nation.tag()).addPlayer(event.getPlayer());
         }

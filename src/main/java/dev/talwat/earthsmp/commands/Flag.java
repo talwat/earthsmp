@@ -22,7 +22,7 @@ public class Flag extends SubCommand {
             return true;
         }
 
-        Nation nation = plugin.borders.getNationFromRuler(player.getUniqueId());
+        Nation nation = plugin.borders.get(player.getUniqueId());
         if (nation == null) {
             player.sendPlainMessage("Only rulers can spawn flags!");
 
