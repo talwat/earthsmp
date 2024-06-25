@@ -65,8 +65,8 @@ public class Accept extends SubCommand {
             ruler.sendPlainMessage(format("%s has joined %s!", player.getName(), nationName));
         }
 
-        plugin.borders.Load();
         config.Save(plugin);
+        plugin.borders.Load();
 
         return true;
     }
