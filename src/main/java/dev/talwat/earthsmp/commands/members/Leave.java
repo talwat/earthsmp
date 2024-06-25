@@ -1,4 +1,4 @@
-package dev.talwat.earthsmp.commands.invites;
+package dev.talwat.earthsmp.commands.members;
 
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.commands.SubCommand;
@@ -31,7 +31,7 @@ public class Leave extends SubCommand {
             if (removed) {
                 sender.sendPlainMessage(format("Left %s!", nation.get("name")));
 
-                plugin.borders.loadNations();
+                plugin.borders.Load();
                 config.Save(plugin);
 
                 return true;

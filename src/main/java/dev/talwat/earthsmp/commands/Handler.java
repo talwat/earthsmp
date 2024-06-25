@@ -32,13 +32,13 @@ public final class Handler implements CommandExecutor {
         return switch (args[0]) {
             case "test" -> new Test(plugin);
             case "news" -> new News(plugin);
-            case "member", "members" -> new dev.talwat.earthsmp.commands.invites.Manage(plugin);
-            case "accept" -> new dev.talwat.earthsmp.commands.invites.Accept(plugin);
-            case "decline" -> new dev.talwat.earthsmp.commands.invites.Decline(plugin);
-            case "leave" -> new dev.talwat.earthsmp.commands.invites.Leave(plugin);
+            case "member", "members" -> new dev.talwat.earthsmp.commands.members.Manage(plugin);
+            case "accept" -> new dev.talwat.earthsmp.commands.members.Accept(plugin);
+            case "decline" -> new dev.talwat.earthsmp.commands.members.Decline(plugin);
+            case "leave" -> new dev.talwat.earthsmp.commands.members.Leave(plugin);
             case "marker", "markers" -> new dev.talwat.earthsmp.commands.Markers(plugin);
             case "flag" -> new Flag(plugin);
-            case "list", "playerlist" -> new PlayerList(plugin);
+            case "abdicate" -> new TransferLeader(plugin);
             case "help" -> new Help(plugin);
             default -> null;
         };

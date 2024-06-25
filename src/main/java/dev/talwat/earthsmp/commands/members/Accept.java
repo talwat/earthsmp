@@ -1,6 +1,5 @@
-package dev.talwat.earthsmp.commands.invites;
+package dev.talwat.earthsmp.commands.members;
 
-import dev.talwat.earthsmp.Borders;
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.InviteRequest;
 import dev.talwat.earthsmp.commands.SubCommand;
@@ -53,7 +52,7 @@ public class Accept extends SubCommand {
         }
 
         NationsConfig config = NationsConfig.Load(plugin);
-        Map<String, Object> nation = config.parsed.get(config.findNationByTag(invite.nation));
+        Map<String, Object> nation = config.parsed.get(config.get(invite.nation));
         ((List<String>) nation.get("members")).add(player.getUniqueId().toString());
 
         plugin.inviteRequests.remove(player.getUniqueId());
@@ -66,7 +65,7 @@ public class Accept extends SubCommand {
             ruler.sendPlainMessage(format("%s has joined %s!", player.getName(), nationName));
         }
 
-        plugin.borders = new Borders(plugin);
+        plugin.borders.Load();
         config.Save(plugin);
 
         return true;

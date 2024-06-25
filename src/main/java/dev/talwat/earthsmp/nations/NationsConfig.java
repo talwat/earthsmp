@@ -1,7 +1,9 @@
 package dev.talwat.earthsmp.nations;
 
 import dev.talwat.earthsmp.Earthsmp;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,11 +50,23 @@ public class NationsConfig {
      * Returns an index for the nation corresponding to the input tag.
      * Returns -1 if not found.
      */
-    public int findNationByTag(String inputTag) {
+    public int get(String tag) {
         for (int i = 0; i < parsed.size(); i++) {
-            String tag = (String) parsed.get(i).get("tag");
+            String parsedTag = (String) parsed.get(i).get("tag");
 
-            if (Objects.equals(tag, inputTag)) {
+            if (Objects.equals(tag, parsedTag)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int get(CommandSender ruler) {
+        for (int i = 0; i < parsed.size(); i++) {
+            Nation deserialized = Nation.deserialize(parsed.get(i));
+
+            if (ruler instanceof Player && ((Player) ruler).getUniqueId().equals(deserialized.ruler())) {
                 return i;
             }
         }

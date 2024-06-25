@@ -59,7 +59,7 @@ public class Config extends SubCommand {
 
                 break;
             case "remove", "delete":
-                int index = nationsConfig.findNationByTag(args[3]);
+                int index = nationsConfig.get(args[3]);
                 if (index == -1) {
                     sender.sendPlainMessage(format("%s not found!", args[3]));
                 } else {

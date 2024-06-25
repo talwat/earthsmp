@@ -1,4 +1,4 @@
-package dev.talwat.earthsmp.commands.invites;
+package dev.talwat.earthsmp.commands.members;
 
 import dev.talwat.earthsmp.Earthsmp;
 import dev.talwat.earthsmp.InviteRequest;
