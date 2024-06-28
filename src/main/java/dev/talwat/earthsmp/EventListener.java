@@ -69,7 +69,9 @@ public class EventListener implements Listener {
             return;
         }
 
-        Player player = ((Player) event.getDamager());
+        if (!(event.getDamager() instanceof Player player)) {
+            return;
+        }
 
         if (isAllowed(event.getEntity().getLocation(), player)) {
             event.setCancelled(false);
