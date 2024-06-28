@@ -1,5 +1,7 @@
 package dev.talwat.earthsmp.nations;
 
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.util.HSVLike;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,5 +77,9 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
         }
 
         return nation;
+    }
+
+    public TextColor textColor() {
+        return TextColor.color(HSVLike.hsvLike(hue / 360.0f, 0.75f, 1f));
     }
 }

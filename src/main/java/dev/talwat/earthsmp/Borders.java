@@ -5,8 +5,6 @@ import dev.talwat.earthsmp.nations.NationsConfig;
 import dev.talwat.earthsmp.nations.Territory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.util.HSVLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -172,7 +170,7 @@ public class Borders {
     public @Nullable Nation get(Location pos) {
         Color color = plugin.borders.getColor(pos.toBlockLocation());
 
-        if (IsGrayScale(color) || color.getAlpha() == 0) {
+        if (color == null || IsGrayScale(color) || color.getAlpha() == 0) {
             return null;
         }
 
@@ -270,7 +268,7 @@ public class Borders {
             prefix = net.kyori.adventure.text.Component.text("[Uncivilized]");
         } else {
             prefix = net.kyori.adventure.text.Component.text('[', Style.empty()).
-                    append(net.kyori.adventure.text.Component.text(nation.nick(), TextColor.color(HSVLike.hsvLike(nation.hue() / 360.0f, 0.75f, 1f))))
+                    append(net.kyori.adventure.text.Component.text(nation.nick(), nation.textColor()))
                     .append(net.kyori.adventure.text.Component.text(']', Style.empty()));
         }
 
@@ -316,6 +314,15 @@ public class Borders {
 
     private Color getColor(Location pos) {
         java.awt.Point mapToImage = mapToImage(pos.toBlockLocation());
+
+        if (mapToImage.x < 0 || mapToImage.x >= image.getWidth()) {
+            return null;
+        }
+
+        if (mapToImage.y < 0 || mapToImage.y >= image.getHeight()) {
+            return null;
+        }
+
         return convertToColor(image.getRGB(mapToImage.x, mapToImage.y));
     }
 }

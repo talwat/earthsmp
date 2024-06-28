@@ -3,6 +3,7 @@ package dev.talwat.earthsmp;
 import dev.talwat.earthsmp.nations.Nation;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -14,12 +15,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import static java.lang.String.format;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class EventListener implements Listener {
     private final Earthsmp plugin;
@@ -36,20 +37,34 @@ public class EventListener implements Listener {
         }
 
         if (player != null) {
-            player.sendPlainMessage(format("You aren't allowed to do this in %s!", nation.nick()));
+            player.sendActionBar(
+                    Component.text("You aren't allowed to do this in ")
+                            .append(Component.text(nation.nick(), nation.textColor())
+                                    .append(Component.text("!", NamedTextColor.WHITE))));
         }
 
         return false;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onDamage(EntityDamageByEntityEvent event) {
-        if (event.getEntityType() == EntityType.PLAYER || event.getEntity() instanceof Monster) {
-            event.setCancelled(false);
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPearl(PlayerTeleportEvent event) {
+        if (isAllowed(event.getTo().toBlockLocation(), event.getPlayer())) {
             return;
         }
 
-        if (event.getDamager().getType() != EntityType.PLAYER) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity().getType() == EntityType.VILLAGER) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getEntityType() == EntityType.PLAYER || event.getEntity() instanceof Monster) {
             event.setCancelled(false);
             return;
         }
@@ -73,6 +88,12 @@ public class EventListener implements Listener {
         Block interacted = event.getClickedBlock();
         if (interacted == null) {
             return;
+        }
+
+        if (event.getAction().isRightClick()) {
+            if (event.getMaterial().isEdible() || event.getMaterial().isEmpty()) {
+                return;
+            }
         }
 
         Location pos = interacted.getLocation();

@@ -81,10 +81,6 @@ public class Manage extends SubCommand {
             return true;
         }
 
-        if (args.length <= 2) {
-            return false;
-        }
-
         UUID player = getOfflinePlayer(args[2]).getUniqueId();
         Map<String, Object> nation = config.parsed.get(i);
 
