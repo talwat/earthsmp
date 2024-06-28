@@ -69,6 +69,11 @@ class Markers extends SubCommand {
             return false;
         }
 
+        if (args[2].length() > 64) {
+            player.sendPlainMessage("Your marker name is too long! (Max: 64)");
+            return false;
+        }
+
         player.sendPlainMessage("Adding marker...");
 
         for (Map<String, List<Map<String, Object>>> nationMarkers : markers) {

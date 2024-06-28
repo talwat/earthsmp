@@ -88,7 +88,7 @@ public class EventListener implements Listener {
         }
 
         Block interacted = event.getClickedBlock();
-        if (interacted == null) {
+        if (interacted == null || interacted.isEmpty()) {
             return;
         }
 
