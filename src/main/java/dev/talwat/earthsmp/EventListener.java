@@ -92,10 +92,6 @@ public class EventListener implements Listener {
             return;
         }
 
-        if (event.getAction().isRightClick() && event.getMaterial().isEdible()) {
-            return;
-        }
-
         Location pos = interacted.getLocation();
 
         if (isAllowed(pos, event.getPlayer())) {
