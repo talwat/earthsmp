@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -88,7 +89,7 @@ public class EventListener implements Listener {
         }
 
         Block interacted = event.getClickedBlock();
-        if (interacted == null || interacted.isEmpty()) {
+        if (interacted == null || interacted.isEmpty() || interacted.getType() == Material.OAK_BUTTON) {
             return;
         }
 
