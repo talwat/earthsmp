@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -56,12 +55,12 @@ public class EventListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
-    public void onDamage(EntityDamageEvent event) {
-        if (event.getEntity().getType() == EntityType.VILLAGER) {
-            event.setCancelled(true);
-        }
-    }
+//    @EventHandler(priority = EventPriority.LOW)
+//    public void onDamage(EntityDamageEvent event) {
+//        if (event.getEntity().getType() == EntityType.VILLAGER) {
+//            event.setCancelled(true);
+//        }
+//    }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
