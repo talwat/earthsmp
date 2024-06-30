@@ -11,7 +11,7 @@ import java.util.*;
 import static dev.talwat.earthsmp.nations.NationsConfig.getUUIDs;
 
 public record Nation(@NotNull String tag, @NotNull String name, @NotNull String nick, int hue, @Nullable UUID ruler,
-                     @Nullable String flag, @Nullable String master, @NotNull List<UUID> members,
+                     @Nullable String flag, @Nullable String master, boolean secondary, @NotNull List<UUID> members,
                      @Nullable Map<Integer, Territory> territories) implements ConfigurationSerializable {
 
     public static Nation deserialize(Map<String, Object> args) {
@@ -40,6 +40,12 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
             ruler = UUID.fromString(rawRuler);
         }
 
+        Boolean secondary = false;
+        Object rawSecondary = args.get("secondary");
+        if (rawSecondary != null) {
+            secondary = (Boolean) rawSecondary;
+        }
+
         return new Nation(
                 (String) args.get("tag"),
                 (String) args.get("name"),
@@ -48,6 +54,7 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
                 ruler,
                 (String) args.get("flag"),
                 (String) args.get("master"),
+                secondary,
                 uuids,
                 territories
         );
@@ -70,6 +77,10 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
 
         if (this.master != null) {
             nation.put("master", master);
+        }
+
+        if (this.secondary) {
+            nation.put("secondary", true);
         }
 
         if (!this.members.isEmpty()) {

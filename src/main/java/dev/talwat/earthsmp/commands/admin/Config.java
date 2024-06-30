@@ -50,6 +50,7 @@ public class Config extends SubCommand {
                         ruler,
                         null,
                         null,
+                        false,
                         members,
                         null
                 );

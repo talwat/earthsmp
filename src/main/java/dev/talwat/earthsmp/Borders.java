@@ -46,6 +46,10 @@ class Cache {
             playerToNation.put(player.getUniqueId(), null);
 
             for (Nation nation : borders.nations.values()) {
+                if (nation.secondary()) {
+                    continue;
+                }
+
                 if (nation.members().contains(player.getUniqueId())) {
                     playerToNation.put(player.getUniqueId(), nation);
                     break;
@@ -185,7 +189,7 @@ public class Borders {
 
     public @Nullable Nation get(UUID ruler) {
         for (Nation nation : nations.values()) {
-            if (nation.ruler() != null && nation.ruler().equals(ruler)) {
+            if (nation.ruler() != null && nation.ruler().equals(ruler) && !nation.secondary()) {
                 return nation;
             }
         }
