@@ -4,7 +4,6 @@ import dev.talwat.earthsmp.nations.Nation;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -122,7 +121,7 @@ public class EventListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.getPlayer().playerListName(plugin.borders.formatUsername(event.getPlayer(), null));
-        event.getPlayer().sendPlayerListHeader(Component.text("Talwat's Earth SMP!\nPlugin Version:").appendSpace().append(Component.text(plugin.getPluginMeta().getVersion(), TextColor.color(60, 248, 100))));
+        event.getPlayer().sendPlayerListHeader(Component.text("Talwat's Earth SMP!\nPlugin Version:").appendSpace().append(Component.text(plugin.getPluginMeta().getVersion(), plugin.accent)));
         event.getPlayer().setScoreboard(plugin.borders.scoreboard);
 
         Nation nation = plugin.borders.getFromCache(event.getPlayer());
