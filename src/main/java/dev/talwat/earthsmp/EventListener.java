@@ -48,7 +48,7 @@ public class EventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPearl(PlayerTeleportEvent event) {
-        if (isAllowed(event.getTo().toBlockLocation(), event.getPlayer())) {
+        if (isAllowed(event.getTo().toBlockLocation(), event.getPlayer()) || event.getPlayer().isOp()) {
             return;
         }
 
