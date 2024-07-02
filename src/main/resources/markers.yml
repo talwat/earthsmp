@@ -3,13 +3,17 @@
 
 # Marker Types
 # * capital
+# * church
 # * city
-# * lumber
-# * train
+# * factory
 # * fort
+# * government
+# * law
+# * lumber
 # * mine
+# * money
 # * port
-# * border_crossing
+# * station
 
 markers:
   - usa: # 3 letter tag
