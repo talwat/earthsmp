@@ -39,6 +39,7 @@ public final class Handler implements CommandExecutor {
             case "marker", "markers" -> new dev.talwat.earthsmp.commands.Markers(plugin);
             case "flag" -> new Flag(plugin);
             case "abdicate" -> new TransferLeader(plugin);
+            case "sign" -> new Sign(plugin);
             case "help" -> new Help(plugin);
             default -> null;
         };

@@ -2,6 +2,7 @@ package dev.talwat.earthsmp;
 
 import dev.talwat.earthsmp.commands.Handler;
 import dev.talwat.earthsmp.mapmarkers.MapMarkers;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -15,6 +16,8 @@ public final class Earthsmp extends JavaPlugin {
     public MapMarkers markers;
     public Map<UUID, InviteRequest> inviteRequests;
     public News news;
+
+    public final TextColor accent = TextColor.color(60, 248, 100);
 
     @Override
     public void onEnable() {
