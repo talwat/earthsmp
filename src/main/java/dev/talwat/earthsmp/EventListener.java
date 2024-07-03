@@ -92,16 +92,18 @@ public class EventListener implements Listener {
         }
 
         if (event.getAction().isRightClick()) {
-            if (event.getItem().getType().isEdible() && !interacted.getType().isInteractable()) {
-                return;
-            }
+            if (event.getItem() != null) {
+                if (event.getItem().getType().isEdible() && !interacted.getType().isInteractable()) {
+                    return;
+                }
 
-            if (event.getItem().getType() == Material.OAK_BOAT && (interacted.getType() == Material.WATER)) {
-                return;
-            }
+                if (event.getItem().getType() == Material.OAK_BOAT && (interacted.getType() == Material.WATER)) {
+                    return;
+                }
 
-            if (event.getItem().getType() == Material.MINECART && (interacted.getType() == Material.POWERED_RAIL || interacted.getType() == Material.RAIL)) {
-                return;
+                if (event.getItem().getType() == Material.MINECART && (interacted.getType() == Material.POWERED_RAIL || interacted.getType() == Material.RAIL)) {
+                    return;
+                }
             }
         }
 
