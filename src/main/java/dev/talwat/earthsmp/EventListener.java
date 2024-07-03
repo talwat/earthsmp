@@ -87,11 +87,15 @@ public class EventListener implements Listener {
         }
 
         Block interacted = event.getClickedBlock();
-        if (interacted == null || interacted.isEmpty() || interacted.getType() == Material.OAK_BUTTON) {
+        if (interacted == null || interacted.isEmpty()) {
             return;
         }
 
         if (event.getAction().isRightClick()) {
+            if (interacted.getType() == Material.OAK_BUTTON) {
+                return;
+            }
+
             if (event.getItem() != null) {
                 if (event.getItem().getType().isEdible() && !interacted.getType().isInteractable()) {
                     return;
