@@ -13,7 +13,7 @@ class Help extends SubCommand {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         sender.sendPlainMessage(
-                "\nearth test\nearth accept <tag>\nearth decline\nearth leave\nearth flag\nearth sign"
+                "\nearth test\nearth accept <tag>\nearth decline\nearth leave\nearth flag\nearth sign\n"
         );
         sender.sendPlainMessage("earth abdicate <new leader>\nearth member add <username>\nearth member kick <username>\nearth member list\n");
         sender.sendPlainMessage("earth marker new <label> <type>\nearth marker list\nearth marker delete <index>\n");
