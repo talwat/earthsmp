@@ -26,7 +26,15 @@ public class Leave extends SubCommand {
 
         NationsConfig config = NationsConfig.Load(plugin);
         for (Map<String, Object> nation : config.parsed) {
-            boolean removed = ((List<String>) nation.get("members")).remove(player.getUniqueId().toString());
+            List<String> members = (List<String>) nation.get("members");
+            String uuid = player.getUniqueId().toString();
+
+            if (nation.get("ruler") == uuid) {
+                sender.sendPlainMessage("You must abdicate first!");
+                return true;
+            }
+
+            boolean removed = members.remove(uuid);
 
             if (removed) {
                 sender.sendPlainMessage(format("Left %s!", nation.get("name")));

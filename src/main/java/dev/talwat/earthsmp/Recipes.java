@@ -32,6 +32,8 @@ public class Recipes {
         quartz();
         stonebricks();
         brick();
+        netherbrick();
+        netherwart();
     }
 
     public static void rails() {
@@ -227,5 +229,26 @@ public class Recipes {
         calcite.setIngredient('M', Material.BONE_MEAL);
 
         getServer().addRecipe(calcite);
+    }
+
+    public static void netherbrick() {
+        ItemStack result = new ItemStack(Material.NETHER_BRICK, 12);
+        ShapedRecipe netherbrick = new ShapedRecipe(new NamespacedKey(plugin, "netherbrick"), result);
+
+        netherbrick.shape("BBB", "BRB", "BBB");
+        netherbrick.setIngredient('B', Material.BRICK);
+        netherbrick.setIngredient('R', Material.REDSTONE);
+
+        getServer().addRecipe(netherbrick);
+    }
+
+    public static void netherwart() {
+        ItemStack result = new ItemStack(Material.NETHER_WART, 1);
+        ShapelessRecipe netherwart = new ShapelessRecipe(new NamespacedKey(plugin, "netherwart"), result);
+
+        netherwart.addIngredient(Material.DIAMOND);
+        netherwart.addIngredient(Material.REDSTONE);
+
+        getServer().addRecipe(netherwart);
     }
 }

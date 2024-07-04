@@ -73,6 +73,10 @@ public class Manage extends SubCommand {
             return false;
         }
 
+        if (!(sender instanceof Player ruler)) {
+            return true;
+        }
+
         NationsConfig config = NationsConfig.Load(plugin);
         int i = config.get(sender);
 
@@ -82,6 +86,11 @@ public class Manage extends SubCommand {
         }
 
         UUID player = getOfflinePlayer(args[2]).getUniqueId();
+        if (ruler.getUniqueId() == player) {
+            sender.sendPlainMessage("You can't kick yourself! You must abdicate first, then leave.");
+            return true;
+        }
+
         Map<String, Object> nation = config.parsed.get(i);
 
         boolean result = ((List<String>) nation.get("members")).remove(player.toString());

@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -81,6 +82,19 @@ public class EventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onEntityInteract(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked().getType() == EntityType.VILLAGER) {
+            return;
+        }
+
+        if (isAllowed(event.getRightClicked().getLocation(), event.getPlayer())) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.useItemInHand() == Event.Result.ALLOW) {
             return;
@@ -92,7 +106,7 @@ public class EventListener implements Listener {
         }
 
         if (event.getAction().isRightClick()) {
-            if (interacted.getType() == Material.OAK_BUTTON) {
+            if (interacted.getType() == Material.OAK_BUTTON || interacted.getType() == Material.SPRUCE_BUTTON) {
                 return;
             }
 
