@@ -14,7 +14,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -55,12 +57,23 @@ public class EventListener implements Listener {
         event.setCancelled(true);
     }
 
-//    @EventHandler(priority = EventPriority.LOW)
-//    public void onDamage(EntityDamageEvent event) {
-//        if (event.getEntity().getType() == EntityType.VILLAGER) {
-//            event.setCancelled(true);
-//        }
-//    }
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity().getType() == EntityType.VILLAGER) {
+            if (event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+                return;
+            }
+
+            if (event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
+                return;
+            }
+
+            if (event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
+                return;
+            }
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
@@ -100,8 +113,12 @@ public class EventListener implements Listener {
             return;
         }
 
+        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) {
+            return;
+        }
+
         Block interacted = event.getClickedBlock();
-        if (interacted == null || interacted.isEmpty()) {
+        if (interacted == null) {
             return;
         }
 
@@ -110,16 +127,16 @@ public class EventListener implements Listener {
                 return;
             }
 
-            if (event.getItem() != null) {
-                if (event.getItem().getType().isEdible() && !interacted.getType().isInteractable()) {
+            if (event.getItem() != null && !interacted.getType().isInteractable()) {
+                if (event.getItem().getType().isEdible()) {
                     return;
                 }
 
-                if (event.getItem().getType() == Material.OAK_BOAT && (interacted.getType() == Material.WATER)) {
+                if (event.getItem().getType() == Material.OAK_BOAT) {
                     return;
                 }
 
-                if (event.getItem().getType() == Material.MINECART && (interacted.getType() == Material.POWERED_RAIL || interacted.getType() == Material.RAIL)) {
+                if (event.getItem().getType() == Material.MINECART) {
                     return;
                 }
             }

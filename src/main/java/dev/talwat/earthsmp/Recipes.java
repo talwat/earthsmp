@@ -34,6 +34,7 @@ public class Recipes {
         brick();
         netherbrick();
         netherwart();
+        netherrack();
     }
 
     public static void rails() {
@@ -250,5 +251,16 @@ public class Recipes {
         netherwart.addIngredient(Material.REDSTONE);
 
         getServer().addRecipe(netherwart);
+    }
+
+    public static void netherrack() {
+        ItemStack result = new ItemStack(Material.NETHERRACK, 1);
+        ShapedRecipe netherrack = new ShapedRecipe(new NamespacedKey(plugin, "netherrack"), result);
+
+        netherrack.shape("DDD", "DRD", "DDD");
+        netherrack.setIngredient('D', Material.DIRT);
+        netherrack.setIngredient('R', Material.REDSTONE);
+
+        getServer().addRecipe(netherrack);
     }
 }
