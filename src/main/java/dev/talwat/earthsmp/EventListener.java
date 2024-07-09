@@ -94,13 +94,15 @@ public class EventListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public void onEntityInteract(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked().getType() == EntityType.VILLAGER) {
+        if (event.getRightClicked().getType() == EntityType.VILLAGER || event.getRightClicked().getType() == EntityType.MINECART || event.getRightClicked().getType() == EntityType.BOAT) {
+            event.setCancelled(false);
             return;
         }
 
         if (isAllowed(event.getRightClicked().getLocation(), event.getPlayer())) {
+            event.setCancelled(false);
             return;
         }
 
@@ -137,6 +139,10 @@ public class EventListener implements Listener {
                 }
 
                 if (event.getItem().getType() == Material.MINECART) {
+                    return;
+                }
+
+                if (event.getItem().getType().isAir()) {
                     return;
                 }
             }

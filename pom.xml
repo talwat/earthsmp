@@ -6,7 +6,7 @@
 
     <groupId>dev.talwat</groupId>
     <artifactId>earthsmp</artifactId>
-    <version>1.4.7</version>
+    <version>1.4.8</version>
     <packaging>jar</packaging>
 
     <name>EarthSMP</name>
