@@ -32,9 +32,9 @@ public class Recipes {
         quartz();
         stonebricks();
         brick();
-        netherbrick();
-        netherwart();
-        netherrack();
+        netherBrick();
+        netherWart();
+        netherRack();
     }
 
     public static void rails() {
@@ -232,35 +232,35 @@ public class Recipes {
         getServer().addRecipe(calcite);
     }
 
-    public static void netherbrick() {
+    public static void netherBrick() {
         ItemStack result = new ItemStack(Material.NETHER_BRICK, 12);
-        ShapedRecipe netherbrick = new ShapedRecipe(new NamespacedKey(plugin, "netherbrick"), result);
+        ShapedRecipe netherBrick = new ShapedRecipe(new NamespacedKey(plugin, "netherbrick"), result);
 
-        netherbrick.shape("BBB", "BRB", "BBB");
-        netherbrick.setIngredient('B', Material.BRICK);
-        netherbrick.setIngredient('R', Material.REDSTONE);
+        netherBrick.shape("BBB", "BRB", "BBB");
+        netherBrick.setIngredient('B', Material.BRICK);
+        netherBrick.setIngredient('R', Material.REDSTONE);
 
-        getServer().addRecipe(netherbrick);
+        getServer().addRecipe(netherBrick);
     }
 
-    public static void netherwart() {
-        ItemStack result = new ItemStack(Material.NETHER_WART, 1);
-        ShapelessRecipe netherwart = new ShapelessRecipe(new NamespacedKey(plugin, "netherwart"), result);
+    public static void netherWart() {
+        ItemStack result = new ItemStack(Material.NETHER_WART, 4);
+        ShapelessRecipe netherWart = new ShapelessRecipe(new NamespacedKey(plugin, "netherwart"), result);
 
-        netherwart.addIngredient(Material.DIAMOND);
-        netherwart.addIngredient(Material.REDSTONE);
+        netherWart.addIngredient(Material.DIAMOND);
+        netherWart.addIngredient(Material.REDSTONE);
 
-        getServer().addRecipe(netherwart);
+        getServer().addRecipe(netherWart);
     }
 
-    public static void netherrack() {
+    public static void netherRack() {
         ItemStack result = new ItemStack(Material.NETHERRACK, 1);
-        ShapedRecipe netherrack = new ShapedRecipe(new NamespacedKey(plugin, "netherrack"), result);
+        ShapedRecipe netherRack = new ShapedRecipe(new NamespacedKey(plugin, "netherrack"), result);
 
-        netherrack.shape("DDD", "DRD", "DDD");
-        netherrack.setIngredient('D', Material.DIRT);
-        netherrack.setIngredient('R', Material.REDSTONE);
+        netherRack.shape("DDD", "DRD", "DDD");
+        netherRack.setIngredient('D', Material.DIRT);
+        netherRack.setIngredient('R', Material.REDSTONE);
 
-        getServer().addRecipe(netherrack);
+        getServer().addRecipe(netherRack);
     }
 }

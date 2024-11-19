@@ -24,7 +24,6 @@ public final class Earthsmp extends JavaPlugin {
         saveDefaultConfig();
         saveResource("nations.yml", false);
         saveResource("markers.yml", false);
-        saveResource("titles.yml", false);
         saveResource("news/news.yml", false);
 
         try {
