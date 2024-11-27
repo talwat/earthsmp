@@ -29,7 +29,7 @@ signed to act as currency.
 The Ideology behind the plugin is to reduce the amount of control the server has as much as possible.
 Instead, things such as economy, war, and transport should be dictated by player-setup systems rather
 than built in shops, currencies, and teleport commands. This really helps immersion, and provides a
-layer of "realism" by Players having to set up these systems themselves.
+layer of "realism" by players having to set up these systems themselves.
 
 ## Commands
 
@@ -72,7 +72,8 @@ Make a new marker. The available types are: `capital`, `city`, `lumber`, `port`,
 #### `/earth marker delete <index>`
 
 Deletes a marker. If you want to find out the index, use `/earth marker list`.
-Indexes shift every time you delete though, so you'll have to check the list each time you want to delete a marker.
+Indexes shift every time you delete though, so you'll have to check the list each
+time you want to delete a marker.
 
 #### `/earth member add <username>`
 
@@ -81,3 +82,36 @@ Sends a join invitation to a user.
 #### `/earth member kick <username>`
 
 Kicks a user.
+
+## Usage Details
+
+This plugin's state is entirely defined by a few yaml files and `borders.png` in the plugin's
+directory. This is usually `plugins/EarthSMP`. These contain the data for borders,
+countries, markers, and everything else.
+
+### Borders
+
+The `borders.png` file is the most challenging to work with. When setting it up,
+remember that one pixel of the image is one chunk in game. Additionally,
+the center of the image corresponds with chunk (0, 0).
+
+You'll have to play around with it a bit to get a feel for it.
+Grayscale pixels are also completely ignored, so you may use a grayscale
+overlay of the Earth map you're using to give you a guide when drawing borders.
+
+### Nations
+
+Unlike Towny, this plugin doesn't have "towns", only nations.
+Nations are defined in `nations.yml`, and while there exist *some*
+commands to create new nations, you'll still have to edit this file
+regularly.
+
+Comments will, unfortunately, not be preserved in this file, but you can
+refer to the [original commented file](https://github.com/talwat/earthsmp/blob/main/src/main/resources/nations.yml)
+for field definitions and such.
+
+### Markers
+
+These are both relatively self-explanatory and do not need to be managed
+by the admins. Rather, nation leaders are able to create markers by themselves
+assigned to their nation.
