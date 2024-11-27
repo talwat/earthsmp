@@ -2,6 +2,9 @@
 
 This is the plugin used for Talwat's EarthSMP as a replacement for Towny, and several other plugins.
 
+Currently, it's only compatible with paper on minecraft version 1.19.4.
+It also requires the server have squaremap installed, as it uses it to display borders.
+
 ## Features
 
 * Borders, defined by an image file (`borders.png`) rather than arbitrary chunks.
