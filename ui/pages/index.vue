@@ -10,5 +10,6 @@ const data = useAuth();
   </div>
   <ul>
     <li><a href="/borders">Borders</a></li>
+    <li><a href="/nations">Nations</a></li>
   </ul>
 </template>
