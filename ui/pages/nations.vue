@@ -29,7 +29,7 @@ const raw: Nations = await content();
 raw.nations.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0));
 const nations = ref(raw);
 
-const knownPlayers = ref(new Map());
+const knownPlayers = await $fetch("/api/usercache");
 
 async function content() {
   const text = (await $fetch(url.value)) as string;
@@ -50,10 +50,6 @@ function deleteMember(nation: Nation, i: number) {
   if (nation.members[i].length == 0) {
     nation.members.splice(i, 1);
   }
-}
-
-async function lookupPlayer(uuid: string) {
-  // TODO
 }
 </script>
 
@@ -102,14 +98,19 @@ async function lookupPlayer(uuid: string) {
             <td>
               <ul>
                 <li v-for="(member, i) in nation.members">
-                  <input
-                    @change="deleteMember(nation, i)"
-                    class="code uuid"
-                    v-model="nation.members[i]"
-                    :class="{ 'member-ruler': nation.ruler == member }"
-                  />
-                  <span v-if="knownPlayers.has(member)">{{ member }}</span>
-                  <button v-else @click="lookupPlayer(member)">Who?</button>
+                  <div class="player-container">
+                    <button @click="nation.members.splice(i, 1)">X</button>
+                    <input
+                      @blur="deleteMember(nation, i)"
+                      class="code uuid"
+                      v-model="nation.members[i]"
+                      :class="{ 'member-ruler': nation.ruler == member }"
+                    />
+                    <span v-if="knownPlayers[member]" class="player-name">{{
+                      knownPlayers[member]
+                    }}</span>
+                    <span v-else class="disabled player-name">Unknown</span>
+                  </div>
                 </li>
                 <li><button @click="addMember(nation)">+</button></li>
               </ul>
@@ -117,12 +118,12 @@ async function lookupPlayer(uuid: string) {
           </tr>
           <tr>
             <th>Ruler</th>
-            <td>
-              <input
-                class="code"
-                v-model="nation.ruler"
-                placeholder="No Ruler"
-              />
+            <td class="player-container">
+              <input class="code uuid" v-model="nation.ruler" />
+              <span v-if="knownPlayers[nation.ruler]" class="player-name">{{
+                knownPlayers[nation.ruler]
+              }}</span>
+              <span v-else class="disabled player-name">Unknown</span>
             </td>
           </tr>
         </tbody>
@@ -183,16 +184,21 @@ th {
   padding: 0.3em;
   border-right: 1px solid black;
   text-align: left;
-  width: 7em;
+  width: 8em;
 }
 
 td {
   padding: 0.3em;
 }
 
-li {
-  display: flex;
+.player-name {
+  font-style: italic;
+}
+
+.player-container {
   gap: 1em;
+  min-height: 1.5em;
+  display: flex;
 }
 
 .uuid {
