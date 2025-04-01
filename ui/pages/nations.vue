@@ -38,8 +38,8 @@ async function content() {
   return parsed;
 }
 
-function formatColor(color: number) {
-  return `hsl(${color}, 100%, 50%)`;
+function hsl(hue: number, saturation: number) {
+  return `hsl(${hue}, ${saturation}%, 50%)`;
 }
 
 function addMember(nation: Nation) {
@@ -82,7 +82,7 @@ function deleteMember(nation: Nation, i: number) {
             <td class="color-container">
               <div
                 class="box"
-                :style="{ backgroundColor: formatColor(nation.color) }"
+                :style="{ backgroundColor: hsl(nation.color, 100) }"
               ></div>
               <input v-model="nation.color" />
             </td>
@@ -103,7 +103,7 @@ function deleteMember(nation: Nation, i: number) {
                       class="square-btn"
                       @click="nation.members.splice(i, 1)"
                     >
-                      X
+                      <X></X>
                     </button>
                     <input
                       @blur="deleteMember(nation, i)"
@@ -119,7 +119,7 @@ function deleteMember(nation: Nation, i: number) {
                 </li>
                 <li>
                   <button class="square-btn" @click="addMember(nation)">
-                    +
+                    <Plus></Plus>
                   </button>
                 </li>
               </ul>
@@ -141,6 +141,78 @@ function deleteMember(nation: Nation, i: number) {
               >
             </td>
           </tr>
+          <tr>
+            <th>Territories</th>
+            <td class="territory-data">
+              <ul class="territory-list">
+                <li v-for="(territory, i) in nation.territories">
+                  <table class="territory-table">
+                    <tbody>
+                      <tr rowspan="2">
+                        <th>Name</th>
+                        <td><input v-model="nation.territories[i].name" /></td>
+                      </tr>
+                      <tr rowspan="2">
+                        <th>Tag</th>
+                        <td>
+                          <input
+                            v-model="nation.territories[i].tag"
+                            class="code"
+                          />
+                        </td>
+                      </tr>
+                      <tr rowspan="2">
+                        <th>Colony</th>
+                        <td>
+                          <input
+                            type="checkbox"
+                            v-model="nation.territories[i].colony"
+                          />
+                        </td>
+                      </tr>
+                      <tr rowspan="1">
+                        <th>Color</th>
+                        <td class="color-container">
+                          <div
+                            class="box"
+                            :style="{
+                              backgroundColor: hsl(
+                                nation.color,
+                                territory.color,
+                              ),
+                            }"
+                          ></div>
+                          <input v-model="nation.territories[i].color" />
+                        </td>
+                        <td
+                          class="territory-remove"
+                          @click="nation.territories.splice(i, 1)"
+                        >
+                          <X></X>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </li>
+                <li>
+                  <button
+                    class="large-square-btn"
+                    @click="
+                      () => {
+                        if (!nation.territories) {
+                          nation.territories = [];
+                        }
+
+                        nation.territories.push({ color: 0 } as Territory);
+                      }
+                    "
+                  >
+                    <Plus></Plus>
+                  </button>
+                </li>
+              </ul>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -156,6 +228,47 @@ function deleteMember(nation: Nation, i: number) {
 
 .nation {
   width: 100%;
+}
+
+input[type="checkbox"] {
+  width: auto;
+}
+
+ul {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding-left: 20px;
+}
+
+.territory-remove {
+  border-left: 1px solid black;
+  text-align: center;
+  padding: 0;
+  height: 32px;
+  width: 32px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.territory-remove > svg {
+  width: 50%;
+  height: 50%;
+  display: block;
+  margin: 0 auto;
+}
+
+.territory-remove:hover {
+  background-color: lightgray;
+}
+
+.territory-table {
+  margin: 0;
+  margin-right: 1em;
+  width: calc(100% - 20px);
+}
+
+.territory-list > li:not(:last-child) {
+  margin-bottom: 0.5em;
 }
 
 .nation-title {
@@ -200,6 +313,7 @@ table {
 
 tr {
   border-bottom: 1px solid black;
+  height: 32px;
 }
 
 th {
@@ -216,7 +330,28 @@ td {
 .square-btn {
   width: 20px;
   height: 20px;
-  padding-top: 1px;
+  min-width: 20px;
+  min-height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.square-btn > svg {
+  width: 100%;
+  height: 100%;
+  vertical-align: top;
+}
+
+.large-square-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.large-square-btn > svg {
+  width: 100%;
+  height: 100%;
 }
 
 .player-name {
@@ -224,10 +359,14 @@ td {
 }
 
 .player-container {
-  gap: 1em;
-  min-height: 1.5em;
+  gap: 0.6em;
   display: flex;
   margin-right: 0.7em;
+  align-items: center;
+}
+
+li {
+  min-height: 1.5em;
 }
 
 .uuid {
@@ -240,6 +379,9 @@ td {
   flex-direction: row;
   align-items: center;
   gap: 0.5em;
+  padding: 0;
+  padding-left: 8px;
+  height: inherit;
 }
 
 .box {
