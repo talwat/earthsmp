@@ -57,7 +57,7 @@ function deleteMember(nation: Nation, i: number) {
   <h1>Nations</h1>
   <div class="nations-container">
     <div class="nation" v-for="nation in nations.nations">
-      <h2>
+      <h2 class="nation-title">
         <pre>{{ nation.tag }}</pre>
         - {{ nation.nick }}
       </h2>
@@ -99,7 +99,12 @@ function deleteMember(nation: Nation, i: number) {
               <ul>
                 <li v-for="(member, i) in nation.members">
                   <div class="player-container">
-                    <button @click="nation.members.splice(i, 1)">X</button>
+                    <button
+                      class="square-btn"
+                      @click="nation.members.splice(i, 1)"
+                    >
+                      X
+                    </button>
                     <input
                       @blur="deleteMember(nation, i)"
                       class="code uuid"
@@ -112,18 +117,28 @@ function deleteMember(nation: Nation, i: number) {
                     <span v-else class="disabled player-name">Unknown</span>
                   </div>
                 </li>
-                <li><button @click="addMember(nation)">+</button></li>
+                <li>
+                  <button class="square-btn" @click="addMember(nation)">
+                    +
+                  </button>
+                </li>
               </ul>
             </td>
           </tr>
           <tr>
             <th>Ruler</th>
             <td class="player-container">
-              <input class="code uuid" v-model="nation.ruler" />
+              <input
+                class="code uuid"
+                v-model="nation.ruler"
+                placeholder="No Ruler"
+              />
               <span v-if="knownPlayers[nation.ruler]" class="player-name">{{
                 knownPlayers[nation.ruler]
               }}</span>
-              <span v-else class="disabled player-name">Unknown</span>
+              <span v-else-if="nation.ruler" class="disabled player-name"
+                >Unknown</span
+              >
             </td>
           </tr>
         </tbody>
@@ -141,6 +156,13 @@ function deleteMember(nation: Nation, i: number) {
 
 .nation {
   width: 100%;
+}
+
+.nation-title {
+  border: 1px solid black;
+  border-bottom: 0;
+  margin: 0;
+  padding: 0.2em;
 }
 
 .member-ruler {
@@ -191,6 +213,12 @@ td {
   padding: 0.3em;
 }
 
+.square-btn {
+  width: 20px;
+  height: 20px;
+  padding-top: 1px;
+}
+
 .player-name {
   font-style: italic;
 }
@@ -199,10 +227,12 @@ td {
   gap: 1em;
   min-height: 1.5em;
   display: flex;
+  margin-right: 0.7em;
 }
 
 .uuid {
-  width: 36ch;
+  max-width: 36ch;
+  overflow: scroll;
 }
 
 .color-container {

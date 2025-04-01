@@ -16,24 +16,41 @@ async function change($event: Event) {
 
 <template>
   <h1>Upload Borders</h1>
-  <div class="upload-preview-container">
+  <div class="container">
     <img class="preview-image" :src="preview" />
-    <input
-      id="upload"
-      class="upload"
-      type="file"
-      accept="image/png"
-      capture
-      @change="change($event)"
-    />
-    <label class="upload-label" for="upload">Upload File</label>
+    <div class="options">
+      <input
+        id="upload"
+        class="upload"
+        type="file"
+        accept="image/png"
+        capture
+        @change="change($event)"
+      />
+      <label class="btn upload-label" for="upload">Upload File</label>
+      <span class="info">8-bit RGBA</span>
+      <a class="btn" download="borders.png" :href="preview">Download File</a>
+    </div>
   </div>
-  <a download="borders.png" :href="preview">Download File</a>
 </template>
 
 <style lang="css" scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: center;
+}
+
 .preview-image {
-  width: 50%;
+  object-fit: contain;
+  max-width: 100%;
+  max-height: calc(100vh - 16em);
+  border: 1px solid black;
+}
+
+.info {
+  font-style: italic;
 }
 
 .upload {
@@ -44,9 +61,11 @@ async function change($event: Event) {
   cursor: pointer;
 }
 
-.upload-preview-container {
+.options {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-around;
   gap: 1em;
+  width: 100%;
 }
 </style>
