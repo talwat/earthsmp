@@ -1,11 +1,9 @@
 import { createReadStream } from "fs";
 import { mkdir, readdir, readFile } from "fs/promises";
-import { DATA_PATH } from "~/server/global";
+import { DATA_PATH, NEWS_PATH } from "~/server/global";
 import { createInterface } from "readline/promises";
 
-const NEWS_PATH = `${DATA_PATH}/news`;
-
-interface Article {
+export interface ListArticle {
   date: string;
   headline: string;
 }
@@ -28,7 +26,7 @@ export default defineEventHandler(async (event) => {
     withFileTypes: true,
   });
 
-  let articles: Article[] = [];
+  let articles: ListArticle[] = [];
 
   for (const file of files) {
     if (file.isDirectory()) {

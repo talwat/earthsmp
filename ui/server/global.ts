@@ -5,3 +5,4 @@ export const PAGES = [
   ["/nations", "Nations"],
   ["/news", "News"],
 ];
+export const NEWS_PATH = `${DATA_PATH}/news`;

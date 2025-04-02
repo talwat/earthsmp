@@ -15,8 +15,8 @@ interface Nation {
   nick: string;
   color: number;
   flag: string;
-  ruler: UUID;
-  members: UUID[];
+  ruler: string;
+  members: string[];
   territories: Territory[];
 }
 
@@ -29,7 +29,7 @@ const raw: Nations = await content();
 raw.nations.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0));
 const nations = ref(raw);
 
-const userCache = await $fetch("/api/usercache");
+const userCache: Record<string, string> = await $fetch("/api/usercache");
 
 async function content() {
   const text = (await $fetch(url.value)) as string;
@@ -52,7 +52,7 @@ function memberChange(nation: Nation, i: number) {
     (value) => value[1].toLowerCase() == nation.members[i].toLowerCase(),
   );
   if (cache) {
-    nation.members[i] = cache[0] as UUID;
+    nation.members[i] = cache[0];
   }
 }
 
@@ -115,11 +115,13 @@ function memberBlur(nation: Nation, i: number) {
                     >
                       <X></X>
                     </button>
+
+                    <!-- placeholder="00000000-0000-0000-0000-000000000000" -->
                     <input
                       @blur="memberBlur(nation, i)"
                       @input="memberChange(nation, i)"
                       class="code uuid"
-                      placeholder="00000000-0000-0000-0000-000000000000"
+                      placeholder="UUID or Username"
                       v-model="nation.members[i]"
                       :class="{ 'member-ruler': nation.ruler == member }"
                     />
