@@ -2,7 +2,7 @@ import { writeFile, mkdir } from "fs/promises";
 import type { Encoding } from "h3";
 import { readRawBody, getQuery } from "h3";
 import { getServerSession } from "#auth";
-import { ALLOWED_FILES, DATA_PATH } from "~/server/paths";
+import { ALLOWED_FILES, DATA_PATH } from "~/server/global";
 
 export default defineEventHandler(async (event) => {
   const encoding = (getQuery(event).encoding as Encoding | undefined) || false;

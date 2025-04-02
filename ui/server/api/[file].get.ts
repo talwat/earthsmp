@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { ALLOWED_FILES, DATA_PATH } from "~/server/paths";
+import { ALLOWED_FILES, DATA_PATH } from "~/server/global";
 
 export default defineEventHandler(async (event) => {
   const file = event.context.params!.file;

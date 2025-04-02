@@ -29,7 +29,7 @@ const raw: Nations = await content();
 raw.nations.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0));
 const nations = ref(raw);
 
-const knownPlayers = await $fetch("/api/usercache");
+const userCache = await $fetch("/api/usercache");
 
 async function content() {
   const text = (await $fetch(url.value)) as string;
@@ -43,10 +43,20 @@ function hsl(hue: number, saturation: number) {
 }
 
 function addMember(nation: Nation) {
-  nation.members.push("00000000-0000-0000-0000-000000000000");
+  nation.members.push("" as UUID);
 }
 
-function deleteMember(nation: Nation, i: number) {
+function memberChange(nation: Nation, i: number) {
+  let cacheEntries: [string, string][] = Object.entries(userCache);
+  let cache = cacheEntries.find(
+    (value) => value[1].toLowerCase() == nation.members[i].toLowerCase(),
+  );
+  if (cache) {
+    nation.members[i] = cache[0] as UUID;
+  }
+}
+
+function memberBlur(nation: Nation, i: number) {
   if (nation.members[i].length == 0) {
     nation.members.splice(i, 1);
   }
@@ -106,13 +116,15 @@ function deleteMember(nation: Nation, i: number) {
                       <X></X>
                     </button>
                     <input
-                      @blur="deleteMember(nation, i)"
+                      @blur="memberBlur(nation, i)"
+                      @input="memberChange(nation, i)"
                       class="code uuid"
+                      placeholder="00000000-0000-0000-0000-000000000000"
                       v-model="nation.members[i]"
                       :class="{ 'member-ruler': nation.ruler == member }"
                     />
-                    <span v-if="knownPlayers[member]" class="player-name">{{
-                      knownPlayers[member]
+                    <span v-if="userCache[member]" class="player-name">{{
+                      userCache[member]
                     }}</span>
                     <span v-else class="disabled player-name">Unknown</span>
                   </div>
@@ -133,8 +145,8 @@ function deleteMember(nation: Nation, i: number) {
                 v-model="nation.ruler"
                 placeholder="No Ruler"
               />
-              <span v-if="knownPlayers[nation.ruler]" class="player-name">{{
-                knownPlayers[nation.ruler]
+              <span v-if="userCache[nation.ruler]" class="player-name">{{
+                userCache[nation.ruler]
               }}</span>
               <span v-else-if="nation.ruler" class="disabled player-name"
                 >Unknown</span

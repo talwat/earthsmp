@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import "@/global.css";
+import { PAGES } from "./server/global";
 </script>
 
 <template>
@@ -8,8 +9,9 @@ import "@/global.css";
       <h2><a href="/">Earth UI</a></h2>
       <ul class="nav-items">
         <li><a href="/api/auth/signout">Sign Out</a></li>
-        <li><a href="/borders">Borders</a></li>
-        <li><a href="/nations">Nations</a></li>
+        <li v-for="[href, name] in PAGES">
+          <a :href="href">{{ name }}</a>
+        </li>
       </ul>
     </nav>
   </header>

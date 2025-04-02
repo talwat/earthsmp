@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { PAGES } from "~/server/global";
+
 const data = useAuth();
 </script>
 
@@ -12,8 +14,9 @@ const data = useAuth();
     <a href="/api/auth/signout">Sign Out</a>
   </div>
   <ul>
-    <li><a href="/borders">Borders</a></li>
-    <li><a href="/nations">Nations</a></li>
+    <li v-for="[href, name] in PAGES">
+      <a :href="href">{{ name }}</a>
+    </li>
   </ul>
 </template>
 

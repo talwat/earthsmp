@@ -15,7 +15,7 @@ async function change($event: Event) {
 </script>
 
 <template>
-  <h1>Upload Borders</h1>
+  <h1>Borders</h1>
   <div class="container">
     <img class="preview-image" :src="preview" />
     <div class="options">
