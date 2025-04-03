@@ -8,7 +8,6 @@ import { PAGES } from "./server/global";
     <nav class="top-bar">
       <h2><a href="/">Earth UI</a></h2>
       <ul class="nav-items">
-        <li><a href="/api/auth/signout">Sign Out</a></li>
         <li v-for="[href, name] in PAGES">
           <a :href="href">{{ name }}</a>
         </li>
@@ -40,10 +39,13 @@ import { PAGES } from "./server/global";
 }
 
 .nav-items {
+  flex-grow: 1;
   display: flex;
   flex-direction: row-reverse;
+  justify-content: flex-start;
   align-items: center;
   margin-right: 32px;
+  padding-left: 0;
   gap: 2em;
   width: 50vw;
 }
@@ -65,5 +67,18 @@ h2 {
   margin: 0;
   margin-left: 32px;
   font-size: 1.7em;
+}
+
+@media (max-width: 600px) {
+  .nav-items {
+    display: none;
+  }
+
+  h2 {
+    flex-grow: 1;
+    margin: 0;
+    text-align: center;
+    font-size: 2em;
+  }
 }
 </style>

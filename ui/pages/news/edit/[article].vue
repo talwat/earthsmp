@@ -8,9 +8,10 @@ interface Article {
 }
 
 let date = route.params.article as string;
-let article: Ref<Article, Article> = ref(
-  await $fetch(`/api/news/${date}?t=${Date.now()}`),
-);
+let article = (await useFetch(`/api/news/${date}?t=${Date.now()}`)).data as Ref<
+  Article,
+  Article
+>;
 let changed = ref(false);
 
 async function upload() {

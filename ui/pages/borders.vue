@@ -65,7 +65,14 @@ async function change($event: Event) {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  align-items: center;
   gap: 1em;
   width: 100%;
+}
+
+@media (max-width: 600px) {
+  .options {
+    justify-content: space-between;
+  }
 }
 </style>

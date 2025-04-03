@@ -40,7 +40,8 @@ let filtered = computed(() =>
 );
 let changed = ref(false);
 
-const userCache: Record<string, string> = await $fetch("/api/usercache");
+const userCache: Record<string, string> = (await useFetch("/api/usercache"))
+  .data.value;
 
 async function content(): Promise<Nations> {
   const text = (await $fetch(url())) as string;
@@ -308,6 +309,7 @@ function memberBlur(nation: Nation, i: number) {
 
 .nation {
   width: 100%;
+  max-width: calc(100vw - 2em);
 }
 
 input[type="checkbox"] {
