@@ -1,4 +1,4 @@
-import { mkdir, stat, readFile, writeFile } from "fs/promises";
+import { mkdir, stat, writeFile } from "fs/promises";
 import { DATA_PATH, NEWS_PATH } from "~/server/global";
 
 function verify(str: string) {
@@ -8,8 +8,6 @@ function verify(str: string) {
 
 interface Article {
   headline: String;
-  body: String;
-  date: String;
 }
 
 export default defineEventHandler(async (event) => {
@@ -42,7 +40,21 @@ export default defineEventHandler(async (event) => {
   }
 
   let path = `${NEWS_PATH}/${year}-${month}-${day}.txt`;
-  let body: Article = await readBody(event);
+  let error = false;
 
-  await writeFile(path, `${body.headline}, ${body.body}`);
+  try {
+    let exists = await stat(path);
+    if (exists) {
+      error = true;
+    }
+  } catch {
+    let body: Article = await readBody(event);
+    await writeFile(path, `${body.headline}`);
+  }
+
+  if (error) {
+    throw createError({
+      message: "Article already exists",
+    });
+  }
 });

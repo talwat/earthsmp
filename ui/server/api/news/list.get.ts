@@ -42,8 +42,6 @@ export default defineEventHandler(async (event) => {
       `${file.parentPath}/${file.name}`,
     );
 
-    console.log(`${file.parentPath}/${file.name}`);
-
     articles.push({
       date: name,
       headline,

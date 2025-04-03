@@ -5,7 +5,7 @@ async function change($event: Event) {
   const target = $event.target as HTMLInputElement;
   if (target && target.files) {
     await $fetch("/api/upload/borders.png", {
-      body: await target.files[0].bytes(),
+      body: await target.files[0].arrayBuffer(),
       method: "POST",
       headers: { "Content-Type": "application/octet-stream" },
     });

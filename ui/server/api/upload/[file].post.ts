@@ -7,6 +7,7 @@ import { ALLOWED_FILES, DATA_PATH } from "~/server/global";
 export default defineEventHandler(async (event) => {
   const encoding = (getQuery(event).encoding as Encoding | undefined) || false;
   const data = (await readRawBody(event, encoding))!;
+  console.log(data);
   const file = event.context.params!.file;
   const [filename, extension] = file.split(".", 2);
 
@@ -25,7 +26,7 @@ export default defineEventHandler(async (event) => {
   await writeFile(`${DATA_PATH}/${file}`, data);
 
   const now = new Date();
-  const name = `${filename}_${now.getUTCFullYear()}-${now.getUTCMonth() + 1}-${now.getUTCDate()}`;
+  const name = `${filename}_${now.toISOString()}`;
 
   const image_name = `${name}.${extension}`;
   await writeFile(`${backup_path}/${image_name}`, data);

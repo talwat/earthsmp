@@ -1,10 +1,9 @@
-import { mkdir, stat, readFile } from "fs/promises";
+import { mkdir, writeFile, access, constants } from "fs/promises";
 import { DATA_PATH, NEWS_PATH } from "~/server/global";
 
 interface Article {
   headline: String;
   body: String;
-  date: String;
 }
 
 export default defineEventHandler(async (event) => {
@@ -22,24 +21,16 @@ export default defineEventHandler(async (event) => {
     month = month.slice(1);
   }
 
-  let date = `${year}-${month}-${day}`;
+  let path = `${NEWS_PATH}/${year}-${month}-${day}.txt`;
 
+  let body: Article = await readBody(event);
   try {
-    let file = await readFile(`${NEWS_PATH}/${date}.txt`, "utf8");
-    let firstLine = file.indexOf("\n");
-    if (firstLine == -1) {
-      firstLine = file.length;
-    }
-
-    return {
-      headline: file.substring(0, firstLine),
-      body: file.substring(firstLine).trim(),
-      date,
-    } as Article;
+    await access(path, constants.F_OK);
+    await writeFile(path, `${body.headline}\n\n${body.body}`);
   } catch {
     throw createError({
-      statusCode: 404,
-      statusMessage: `There is no article for ${date}`,
+      status: 404,
+      message: "Article either doesn't exist or can't be written to",
     });
   }
 });

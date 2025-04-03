@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    return readFile(`${DATA_PATH}/${file}`, "utf8");
+    return readFile(`${DATA_PATH}/${file}`);
   } catch {
     throw createError({
       statusCode: 404,

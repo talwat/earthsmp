@@ -8,12 +8,29 @@ interface Article {
 }
 
 let date = route.params.article as string;
-let article: Article = await $fetch(`/api/news/${date}`);
+let article: Ref<Article, Article> = ref(
+  await $fetch(`/api/news/${date}?t=${Date.now()}`),
+);
+let changed = ref(false);
+
+async function upload() {
+  await $fetch(`/api/news/edit/${article.value.date}`, {
+    method: "PATCH",
+    body: article.value,
+  });
+
+  article.value = await $fetch(`/api/news/${date}?t=${Date.now()}`);
+  changed.value = false;
+  alert("Changes saved!");
+}
 </script>
 
 <template>
-  <h1>{{ new Date(date).toDateString() }}</h1>
-  <div class="editor">
+  <h1>Article for {{ date }}</h1>
+  <div class="editor" @input="changed = true">
+    <div class="save-container" v-if="changed">
+      <button @click="upload()">Save Changes</button>
+    </div>
     <label for="headline">Headline: </label>
     <input id="headline" v-model="article.headline" />
     <br />
@@ -22,9 +39,24 @@ let article: Article = await $fetch(`/api/news/${date}`);
   </div>
 </template>
 
+<style>
+main {
+  height: 100%;
+  display: flex;
+  min-height: calc(100vh - 7em);
+  flex-direction: column;
+}
+</style>
+
 <style lang="css" scoped>
 pre {
   display: inline;
+}
+
+.save-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 h1 {
@@ -34,8 +66,7 @@ h1 {
 .editor {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  height: 100%;
+  flex-grow: 1;
   max-width: 40em;
 }
 
@@ -54,6 +85,7 @@ textarea {
 
 textarea {
   resize: none;
-  height: 32em;
+  min-height: 100%;
+  flex-grow: 1;
 }
 </style>

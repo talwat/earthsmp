@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { UUID } from "crypto";
+import { validate as isValidUUID } from "uuid";
 import yaml from "yaml";
+import _ from "lodash";
 
 interface Territory {
   tag: string;
@@ -24,18 +25,39 @@ interface Nations {
   nations: Nation[];
 }
 
-const url = ref(`/api/nations.yml?t=${Date.now()}&encoding=utf8`);
-const raw: Nations = await content();
-raw.nations.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0));
-const nations = ref(raw);
+function url(): string {
+  return `/api/nations.yml?t=${Date.now()}&encoding=utf8`;
+}
+
+let nations = ref(await content());
+let search = ref("");
+let filtered = computed(() =>
+  nations.value.nations.filter(
+    (x) =>
+      x.nick.toLowerCase().includes(search.value.toLowerCase()) ||
+      x.tag.toLowerCase() == search.value.toLowerCase(),
+  ),
+);
+let changed = ref(false);
 
 const userCache: Record<string, string> = await $fetch("/api/usercache");
 
-async function content() {
-  const text = (await $fetch(url.value)) as string;
-  const parsed = yaml.parse(text);
+async function content(): Promise<Nations> {
+  const text = (await $fetch(url())) as string;
+  const parsed: Nations = yaml.parse(text);
 
   return parsed;
+}
+
+async function upload() {
+  await $fetch("/api/upload/nations.yml?encoding=utf8", {
+    method: "POST",
+    body: yaml.stringify(nations.value),
+  });
+
+  nations.value = await content();
+  changed.value = false;
+  alert("Changes uploaded!");
 }
 
 function hsl(hue: number, saturation: number) {
@@ -43,7 +65,29 @@ function hsl(hue: number, saturation: number) {
 }
 
 function addMember(nation: Nation) {
-  nation.members.push("" as UUID);
+  nation.members.push("");
+}
+
+function removeMember(nation: Nation, i: number) {
+  let member = nation.members[i];
+  if (userCache[member]) {
+    member = `${member} (${userCache[member]})`;
+  }
+
+  if (
+    !isValidUUID(nation.members[i]) ||
+    confirm(`Are you sure you'd like to kick ${member} from ${nation.name}?`)
+  ) {
+    nation.members.splice(i, 1);
+  }
+}
+
+function removeTerritory(nation: Nation, i: number) {
+  if (
+    confirm(`Are you sure you'd like to remove ${nation.territories[i].name}?`)
+  ) {
+    nation.territories.splice(i, 1);
+  }
 }
 
 function memberChange(nation: Nation, i: number) {
@@ -57,16 +101,30 @@ function memberChange(nation: Nation, i: number) {
 }
 
 function memberBlur(nation: Nation, i: number) {
-  if (nation.members[i].length == 0) {
+  let validUUID = isValidUUID(nation.members[i]);
+  if (nation.members[i].length == 0 || !validUUID) {
     nation.members.splice(i, 1);
+  }
+
+  if (!validUUID) {
+    alert(
+      "Usernames can only be used for people who have already joined the server. Please use a UUID.",
+    );
   }
 }
 </script>
 
 <template>
   <h1>Nations</h1>
-  <div class="nations-container">
-    <div class="nation" v-for="nation in nations.nations">
+  <div @click="upload()" v-if="changed" class="save-container">
+    <button class="save-btn">Save Changes</button>
+  </div>
+  <div class="search-container">
+    <label for="search">Search</label>
+    <input id="search" v-model="search" placeholder="Nick or Tag" />
+  </div>
+  <div class="nations-container" @input="changed = true">
+    <div class="nation" v-for="nation in filtered">
       <h2 class="nation-title">
         <pre>{{ nation.tag }}</pre>
         - {{ nation.nick }}
@@ -109,10 +167,7 @@ function memberBlur(nation: Nation, i: number) {
               <ul>
                 <li v-for="(member, i) in nation.members">
                   <div class="player-container">
-                    <button
-                      class="square-btn"
-                      @click="nation.members.splice(i, 1)"
-                    >
+                    <button class="square-btn" @click="removeMember(nation, i)">
                       <X></X>
                     </button>
 
@@ -200,7 +255,7 @@ function memberBlur(nation: Nation, i: number) {
                         </td>
                         <td
                           class="territory-remove"
-                          @click="nation.territories.splice(i, 1)"
+                          @click="removeTerritory(nation, i)"
                         >
                           <X></X>
                         </td>
@@ -236,8 +291,19 @@ function memberBlur(nation: Nation, i: number) {
 <style lang="css" scoped>
 .nations-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 1em;
+}
+
+.save-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.save-btn {
+  font-size: 1.15em;
+  margin-bottom: 1em;
 }
 
 .nation {
@@ -246,6 +312,14 @@ function memberBlur(nation: Nation, i: number) {
 
 input[type="checkbox"] {
   width: auto;
+}
+
+#search {
+  margin-bottom: 1em;
+}
+
+label {
+  margin-right: 0.5em;
 }
 
 ul {
@@ -296,7 +370,7 @@ ul {
   text-decoration: underline;
 }
 
-input {
+.nations-container input {
   width: 100%;
   box-sizing: border-box;
   border: none;
@@ -334,7 +408,7 @@ th {
   padding: 0.3em;
   border-right: 1px solid black;
   text-align: left;
-  width: 8em;
+  max-width: 6em;
 }
 
 td {
