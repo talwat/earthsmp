@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import "@/global.css";
-import { PAGES } from "./server/global";
+import { PAGES, PAGES_JOURNALIST } from "./server/global";
+import type { User } from "./pages/index.vue";
+
+let user = useAuth().data.value?.user as User;
+let pages = user.role == "admin" ? PAGES : PAGES_JOURNALIST;
 </script>
 
 <template>
@@ -8,7 +12,7 @@ import { PAGES } from "./server/global";
     <nav class="top-bar">
       <h2><a href="/">Earth UI</a></h2>
       <ul class="nav-items">
-        <li v-for="[href, name] in PAGES">
+        <li v-for="[href, name] in pages">
           <a :href="href">{{ name }}</a>
         </li>
       </ul>

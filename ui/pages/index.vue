@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { PAGES_REVERSED } from "~/server/global";
+import { PAGES, PAGES_JOURNALIST } from "~/server/global";
 
 const data = useAuth();
+
+export interface User {
+  name: string;
+  role: string;
+}
+
+let user = data.data.value?.user! as User;
+let pages = user.role == "admin" ? PAGES.reverse() : PAGES_JOURNALIST.reverse();
 </script>
 
 <template>
@@ -11,7 +19,7 @@ const data = useAuth();
     .
   </h1>
   <ul>
-    <li v-for="[href, name] in PAGES_REVERSED">
+    <li v-for="[href, name] in pages">
       <a :href="href">{{ name }}</a>
     </li>
   </ul>

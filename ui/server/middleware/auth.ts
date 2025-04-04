@@ -1,24 +1,32 @@
 import { getServerSession } from "#auth";
 import { readFile } from "fs/promises";
 
+export interface User {
+  name: string;
+  role: string;
+}
+
 export default eventHandler(async (event) => {
   const session = await getServerSession(event);
 
-  console.log(event.path)
-
-  if (event.path.startsWith("/api/auth") || !event.path.startsWith("/api")) {
+  if (
+    event.path.startsWith("/api/auth") ||
+    event.path.startsWith("/api/role") ||
+    event.path == "/"
+  ) {
     return;
   }
 
-  let roles = readFile("./roles.json");
+  let user: User = session?.user! as User;
+  let name = user.name;
 
-  let name = session?.user?.name;
-  if (session && name != null && name in roles) {
-    let role = roles[name as keyof typeof roles];
-
-    if (role == "admin") {
+  if (session != null && name != null) {
+    if (user.role == "admin") {
       return;
-    } else if (role == "journalist" && event.path.startsWith("/api/news")) {
+    } else if (
+      user.role == "journalist" &&
+      (event.path.startsWith("/api/news") || event.path.startsWith("/news"))
+    ) {
       return;
     }
   }

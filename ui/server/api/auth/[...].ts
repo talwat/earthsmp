@@ -20,11 +20,13 @@ export default NuxtAuthHandler({
       return token;
     },
     async session({ session, token }) {
+      const role = await $fetch(`/api/role/${token.username}`);
       return {
         ...session,
         user: {
           name: token.username as string,
           id: token.id,
+          role,
         },
       };
     },

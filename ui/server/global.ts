@@ -6,10 +6,9 @@ export const PAGES = [
   ["/borders", "Borders"],
   ["/nations", "Nations"],
 ];
-export const PAGES_REVERSED = [
+export const PAGES_JOURNALIST = [
   ["/api/auth/signout", "Sign Out"],
   ["/news", "News"],
-  ["/borders", "Borders"],
-  ["/nations", "Nations"],
-].toReversed();
+];
+
 export const NEWS_PATH = `${DATA_PATH}/news`;
