@@ -7,7 +7,7 @@ import { ALLOWED_FILES, DATA_PATH } from "~/server/global";
 export default defineEventHandler(async (event) => {
   const encoding = (getQuery(event).encoding as Encoding | undefined) || false;
   const data = (await readRawBody(event, encoding))!;
-  console.log(data);
+
   const file = event.context.params!.file;
   const [filename, extension] = file.split(".", 2);
 
