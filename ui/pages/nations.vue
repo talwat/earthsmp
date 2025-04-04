@@ -40,8 +40,8 @@ let filtered = computed(() =>
 );
 let changed = ref(false);
 
-const userCache: Record<string, string> = (await useFetch("/api/usercache"))
-  .data.value;
+// @ts-ignore-error
+const userCache: Record<string, string> = await $fetch("/api/usercache");
 
 async function content(): Promise<Nations> {
   const text = (await $fetch(url())) as string;

@@ -8,10 +8,11 @@ interface Article {
 }
 
 let date = route.params.article as string;
-let article = (await useFetch(`/api/news/${date}?t=${Date.now()}`)).data as Ref<
-  Article,
-  Article
->;
+
+// @ts-ignore
+let article: Ref<Article, Article> = ref(
+  await $fetch(`/api/news/${date}?t=${Date.now()}`),
+);
 let changed = ref(false);
 
 async function upload() {
@@ -20,6 +21,7 @@ async function upload() {
     body: article.value,
   });
 
+  // @ts-ignore-error
   article.value = await $fetch(`/api/news/${date}?t=${Date.now()}`);
   changed.value = false;
   alert("Changes saved!");

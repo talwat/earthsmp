@@ -5,7 +5,9 @@ export interface Article {
 }
 
 let add: Ref<Article, Article> = ref({} as Article);
-let list = (await useFetch("/api/news/list")).data as Ref<Article[], Article[]>;
+
+// @ts-ignore
+let list: Ref<Article[], Article[]> = ref(await $fetch("/api/news/list"));
 
 async function addArticle() {
   if (!add.value.headline) {
