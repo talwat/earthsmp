@@ -4,7 +4,9 @@ import { readFile } from "fs/promises";
 export default eventHandler(async (event) => {
   const session = await getServerSession(event);
 
-  if (event.path.startsWith("/api/auth") && !event.path.startsWith("/api")) {
+  console.log(event.path)
+
+  if (event.path.startsWith("/api/auth") || !event.path.startsWith("/api")) {
     return;
   }
 
