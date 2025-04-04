@@ -9,8 +9,8 @@ interface Article {
 
 let date = route.params.article as string;
 
-// @ts-ignore
 let article: Ref<Article, Article> = ref(
+  // @ts-ignore
   await $fetch(`/api/news/${date}?t=${Date.now()}`),
 );
 let changed = ref(false);
@@ -19,6 +19,9 @@ async function upload() {
   await $fetch(`/api/news/edit/${article.value.date}`, {
     method: "PATCH",
     body: article.value,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   // @ts-ignore-error

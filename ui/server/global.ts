@@ -12,3 +12,4 @@ export const PAGES_JOURNALIST = [
 ];
 
 export const NEWS_PATH = `${DATA_PATH}/news`;
+export const NEWS_BACKUP_PATH = `${DATA_PATH}/news/backup`;
