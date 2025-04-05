@@ -11,6 +11,13 @@ export default NuxtAuthHandler({
     }),
   ],
   callbacks: {
+    async signIn({ user, account, profile }) {
+      const role = await $fetch(
+        `/api/role/${(profile as any).login as string}`,
+      );
+
+      return role && role != "unknown";
+    },
     jwt({ token, account, profile }) {
       if (profile && account) {
         token.username = (profile as any).login as string;

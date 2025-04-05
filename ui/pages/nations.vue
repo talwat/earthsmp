@@ -313,7 +313,7 @@ function memberBlur(nation: Nation, i: number) {
 }
 
 input[type="checkbox"] {
-  width: auto;
+  width: auto !important;
 }
 
 #search {
