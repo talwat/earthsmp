@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { validate as isValidUUID } from "uuid";
 import yaml from "yaml";
-import _ from "lodash";
 
 interface Territory {
   tag: string;
@@ -34,6 +33,7 @@ let search = ref("");
 let filtered = computed(() =>
   nations.value.nations.filter(
     (x) =>
+      x.nick == undefined ||
       x.nick.toLowerCase().includes(search.value.toLowerCase()) ||
       x.tag.toLowerCase() == search.value.toLowerCase(),
   ),
@@ -51,6 +51,17 @@ async function content(): Promise<Nations> {
 }
 
 async function upload() {
+  const required = ["tag", "nick", "name", "color"];
+  for (const nation of nations.value.nations) {
+    for (const key of required) {
+      const value = nation[key as keyof Nation];
+      if (value == undefined || value.toString().length == 0) {
+        alert(`Field ${key} for ${nation.tag}/${nation.name} is missing!`);
+        return;
+      }
+    }
+  }
+
   await $fetch("/api/upload/nations.yml?encoding=utf8", {
     method: "POST",
     body: yaml.stringify(nations.value),
@@ -66,10 +77,18 @@ function hsl(hue: number, saturation: number) {
 }
 
 function addMember(nation: Nation) {
+  changed.value = true;
+
+  if (nation.members == undefined) {
+    nation.members = [];
+  }
+
   nation.members.push("");
 }
 
 function removeMember(nation: Nation, i: number) {
+  changed.value = true;
+
   let member = nation.members[i];
   if (userCache[member]) {
     member = `${member} (${userCache[member]})`;
@@ -77,7 +96,7 @@ function removeMember(nation: Nation, i: number) {
 
   if (
     !isValidUUID(nation.members[i]) ||
-    confirm(`Are you sure you'd like to kick ${member} from ${nation.name}?`)
+    confirm(`Are you sure you'd like to kick ${member} from ${nation.nick}?`)
   ) {
     nation.members.splice(i, 1);
   }
@@ -88,6 +107,16 @@ function removeTerritory(nation: Nation, i: number) {
     confirm(`Are you sure you'd like to remove ${nation.territories[i].name}?`)
   ) {
     nation.territories.splice(i, 1);
+    changed.value = true;
+  }
+}
+
+function removeNation(i: number) {
+  let nation = nations.value.nations[i];
+
+  if (confirm(`Are you sure you'd like to remove ${nation.nick}?`)) {
+    nations.value.nations.splice(i, 1);
+    changed.value = true;
   }
 }
 
@@ -125,17 +154,22 @@ function memberBlur(nation: Nation, i: number) {
     <input id="search" v-model="search" placeholder="Nick or Tag" />
   </div>
   <div class="nations-container" @input="changed = true">
-    <div class="nation" v-for="nation in filtered">
-      <h2 class="nation-title">
-        <pre>{{ nation.tag }}</pre>
-        - {{ nation.nick }}
-      </h2>
+    <div class="nation" v-for="(nation, i) in filtered">
+      <div class="title-container">
+        <h2 class="nation-title">
+          <pre>{{ nation.tag }}</pre>
+          - {{ nation.nick }}
+        </h2>
+        <button class="large-square-btn nation-remove" @click="removeNation(i)">
+          <X></X>
+        </button>
+      </div>
       <table>
         <tbody>
           <tr>
             <th>Tag</th>
             <td>
-              <input class="code" v-model="nation.tag" />
+              <input class="code" placeholder="xxx" v-model="nation.tag" />
             </td>
           </tr>
           <tr>
@@ -269,6 +303,8 @@ function memberBlur(nation: Nation, i: number) {
                     class="large-square-btn"
                     @click="
                       () => {
+                        changed = true;
+
                         if (!nation.territories) {
                           nation.territories = [];
                         }
@@ -286,10 +322,33 @@ function memberBlur(nation: Nation, i: number) {
         </tbody>
       </table>
     </div>
+
+    <div class="add-nation-container">
+      <label for="add-nation">Add Nation</label>
+      <button
+        id="add-nation"
+        class="large-square-btn"
+        @click="
+          () => {
+            changed = true;
+            nations.nations.push({ color: 0 } as Nation);
+          }
+        "
+      >
+        <Plus></Plus>
+      </button>
+    </div>
   </div>
 </template>
 
 <style lang="css" scoped>
+.add-nation-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: fit-content;
+}
+
 .nations-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
@@ -300,6 +359,10 @@ function memberBlur(nation: Nation, i: number) {
   align-items: center;
   display: flex;
   flex-direction: column;
+  position: fixed;
+  width: 100vw;
+  left: 0;
+  top: 5em;
 }
 
 .save-btn {
@@ -316,7 +379,7 @@ input[type="checkbox"] {
   width: auto !important;
 }
 
-#search {
+.search-container {
   margin-bottom: 1em;
 }
 
@@ -362,10 +425,24 @@ ul {
 }
 
 .nation-title {
-  border: 1px solid black;
-  border-bottom: 0;
   margin: 0;
-  padding: 0.2em;
+  padding: 0;
+}
+
+.title-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  border: 1px solid black;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 0;
+  padding-left: 0.3em;
+  padding-right: 0;
+}
+
+.nation-remove {
+  border: 0;
 }
 
 .member-ruler {

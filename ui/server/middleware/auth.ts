@@ -8,27 +8,36 @@ export interface User {
 
 export default eventHandler(async (event) => {
   const session = await getServerSession(event);
+  const error = createError({
+    statusCode: 401,
+    statusMessage: "Unauthorized",
+  });
 
   if (
     event.path.startsWith("/api/auth") ||
     event.path.startsWith("/api/role") ||
-    event.path == "/"
+    !event.path.startsWith("/api")
   ) {
     return;
   }
 
-  let user: User = session?.user! as User;
-  let name = user.name;
+  if (session == null) {
+    throw error;
+  }
 
-  if (session != null && name != null) {
-    if (user.role == "admin") {
-      return;
-    } else if (
-      user.role == "journalist" &&
-      (event.path.startsWith("/api/news") || event.path.startsWith("/news"))
-    ) {
-      return;
-    }
+  let user: User = session.user as User;
+
+  if (user == null) {
+    throw error;
+  }
+
+  if (user.role == "admin") {
+    return;
+  } else if (
+    user.role == "journalist" &&
+    (event.path.startsWith("/api/news") || event.path.startsWith("/news"))
+  ) {
+    return;
   }
 
   throw createError({

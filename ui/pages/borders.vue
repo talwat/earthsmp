@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import Viewer from "viewerjs";
+import "viewerjs/dist/viewer.css";
+
 const preview = ref(`/api/borders.png?t=${Date.now()}`);
+let viewer: Viewer;
 
 async function change($event: Event) {
   const target = $event.target as HTMLInputElement;
@@ -11,13 +15,31 @@ async function change($event: Event) {
     });
   }
   preview.value = `/api/borders.png?t=${Date.now()}`;
+  viewer.update();
 }
+
+onMounted(() => {
+  viewer = new Viewer(document.getElementById("image")!, {
+    inline: true,
+    navbar: false,
+    tooltip: false,
+    title: false,
+    toolbar: false,
+    zoomRatio: 0.2,
+    initialCoverage: 1,
+    container: document.getElementById("image-container")!,
+  });
+
+  viewer.show();
+});
 </script>
 
 <template>
   <h1>Borders</h1>
   <div class="container">
-    <img class="preview-image" :src="preview" />
+    <div id="image-container" class="image-container">
+      <img id="image" class="preview-image" :src="preview" />
+    </div>
     <div class="options">
       <input
         id="upload"
@@ -34,6 +56,12 @@ async function change($event: Event) {
   </div>
 </template>
 
+<style>
+img {
+  image-rendering: pixelated;
+}
+</style>
+
 <style lang="css" scoped>
 .container {
   display: flex;
@@ -42,11 +70,16 @@ async function change($event: Event) {
   align-items: center;
 }
 
+.image-container {
+  width: 100%;
+  height: calc(100vh - 16em);
+  max-width: 64em;
+  overflow: hidden;
+}
+
 .preview-image {
-  object-fit: contain;
-  max-width: 100%;
-  max-height: calc(100vh - 16em);
-  border: 1px solid black;
+  height: 100%;
+  display: none;
 }
 
 .info {
