@@ -15,7 +15,7 @@ let pages = user.role == "admin" ? PAGES.reverse() : PAGES_JOURNALIST.reverse();
 <template>
   <h1>
     Welcome,
-    <pre>{{ data.data.value?.user?.name }}</pre>
+    <pre>{{ user.name }}</pre>
     .
   </h1>
   <ul>

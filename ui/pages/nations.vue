@@ -154,7 +154,7 @@ function memberBlur(nation: Nation, i: number) {
     <input id="search" v-model="search" placeholder="Nick or Tag" />
   </div>
   <div class="nations-container" @input="changed = true">
-    <div class="nation" v-for="(nation, i) in filtered">
+    <div class="nation" v-for="(nation, i) in filtered" :key="i">
       <div class="title-container">
         <h2 class="nation-title">
           <pre>{{ nation.tag }}</pre>
@@ -249,7 +249,7 @@ function memberBlur(nation: Nation, i: number) {
             <th>Territories</th>
             <td class="territory-data">
               <ul class="territory-list">
-                <li v-for="(territory, i) in nation.territories">
+                <li v-for="(territory, i) in nation.territories" :key="i">
                   <table class="territory-table">
                     <tbody>
                       <tr rowspan="2">

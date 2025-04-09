@@ -5,10 +5,7 @@ export default defineNuxtConfig({
   ssr: false,
   modules: ["@sidebase/nuxt-auth"],
   auth: {
-    globalAppMiddleware: {
-      isEnabled: true,
-      addDefaultCallbackUrl: true,
-    },
+    globalAppMiddleware: false,
     provider: {
       type: "authjs",
       defaultProvider: "github",

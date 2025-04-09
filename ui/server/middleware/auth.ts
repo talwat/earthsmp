@@ -1,5 +1,4 @@
 import { getServerSession } from "#auth";
-import { readFile } from "fs/promises";
 
 export interface User {
   name: string;
@@ -8,11 +7,14 @@ export interface User {
 
 export default eventHandler(async (event) => {
   const session = await getServerSession(event);
+
   const error = createError({
     statusCode: 401,
     statusMessage: "Unauthorized",
   });
 
+  // Only handle API routes, since non API routes are
+  // handled by the client middleware.
   if (
     event.path.startsWith("/api/auth") ||
     event.path.startsWith("/api/role") ||
@@ -25,23 +27,17 @@ export default eventHandler(async (event) => {
     throw error;
   }
 
-  let user: User = session.user as User;
+  let user = session.user as User | undefined;
 
-  if (user == null) {
+  if (user == undefined) {
     throw error;
   }
 
   if (user.role == "admin") {
     return;
-  } else if (
-    user.role == "journalist" &&
-    (event.path.startsWith("/api/news") || event.path.startsWith("/news"))
-  ) {
+  } else if (user.role == "journalist" && event.path.startsWith("/api/news")) {
     return;
   }
 
-  throw createError({
-    statusCode: 401,
-    statusMessage: "Unauthorized",
-  });
+  throw error;
 });
