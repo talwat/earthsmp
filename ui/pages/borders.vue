@@ -15,7 +15,7 @@ async function change($event: Event) {
     });
   }
   preview.value = `/api/borders.png?t=${Date.now()}`;
-  viewer.update();
+  nextTick(() => viewer.update())
 }
 
 onMounted(() => {
