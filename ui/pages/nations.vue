@@ -15,6 +15,7 @@ interface Nation {
   nick: string;
   color: number;
   flag: string;
+  id: number | undefined;
   ruler: string;
   members: string[];
   territories: Territory[];
@@ -46,6 +47,10 @@ const userCache: Record<string, string> = await $fetch("/api/usercache");
 async function content(): Promise<Nations> {
   const text = (await $fetch(url())) as string;
   const parsed: Nations = yaml.parse(text);
+
+  parsed.nations.map((x, i) => {
+    x.id = i
+  })
 
   return parsed;
 }
@@ -154,13 +159,13 @@ function memberBlur(nation: Nation, i: number) {
     <input id="search" v-model="search" placeholder="Nick or Tag" />
   </div>
   <div class="nations-container" @input="changed = true">
-    <div class="nation" v-for="(nation, i) in filtered" :key="i">
+    <div class="nation" v-for="nation in filtered" :key="nation.id">
       <div class="title-container">
         <h2 class="nation-title">
           <pre>{{ nation.tag }}</pre>
           - {{ nation.nick }}
         </h2>
-        <button class="large-square-btn nation-remove" @click="removeNation(i)">
+        <button class="large-square-btn nation-remove" @click="removeNation(nation.id!)">
           <X></X>
         </button>
       </div>
@@ -487,7 +492,7 @@ th {
   padding: 0.3em;
   border-right: 1px solid black;
   text-align: left;
-  max-width: 6em;
+  width: 8em;
 }
 
 td {
