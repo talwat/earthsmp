@@ -339,7 +339,10 @@ function memberBlur(nation: Nation, i: number) {
         @click="
           () => {
             changed = true;
-            nations.nations.push({ color: 0 } as Nation);
+            nations.nations.push({
+              color: 0,
+              id: nations.nations.length,
+            } as Nation);
           }
         "
       >

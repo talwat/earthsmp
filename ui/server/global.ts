@@ -8,7 +8,7 @@ export const PAGES = [
 export const PAGES_JOURNALIST = [["/news", "News"]];
 
 export const NEWS_PATH = `${DATA_PATH}/news`;
-export const NEWS_BACKUP_PATH = `${DATA_PATH}/news/backup`;
+export const NEWS_BACKUP_PATH = `${DATA_PATH}/news/backups`;
 
 export interface User {
   name: string;
