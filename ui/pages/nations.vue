@@ -49,8 +49,8 @@ async function content(): Promise<Nations> {
   const parsed: Nations = yaml.parse(text);
 
   parsed.nations.map((x, i) => {
-    x.id = i
-  })
+    x.id = i;
+  });
 
   return parsed;
 }
@@ -165,7 +165,10 @@ function memberBlur(nation: Nation, i: number) {
           <pre>{{ nation.tag }}</pre>
           - {{ nation.nick }}
         </h2>
-        <button class="large-square-btn nation-remove" @click="removeNation(nation.id!)">
+        <button
+          class="large-square-btn nation-remove"
+          @click="removeNation(nation.id!)"
+        >
           <X></X>
         </button>
       </div>

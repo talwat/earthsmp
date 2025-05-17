@@ -3,27 +3,51 @@ import "@/global.css";
 import { PAGES, PAGES_JOURNALIST } from "./server/global";
 import type { User } from "./pages/index.vue";
 
-let user = useAuth().data.value?.user as User;
-let pages = user.role == "admin" ? PAGES : PAGES_JOURNALIST;
+let { user, loggedIn, openInPopup } = useUserSession();
+
+let data = user.value as User | null;
+let pages = data && data.role == "admin" ? PAGES : PAGES_JOURNALIST;
 </script>
 
 <template>
-  <header>
-    <nav class="top-bar">
-      <h2><a href="/">Earth UI</a></h2>
-      <ul class="nav-items">
-        <li v-for="[href, name] in pages">
-          <a :href="href">{{ name }}</a>
-        </li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    <NuxtPage />
+  <template v-if="loggedIn">
+    <header>
+      <nav class="top-bar">
+        <h2><a href="/">Earth UI</a></h2>
+        <ul class="nav-items">
+          <li v-for="[href, name] in pages">
+            <a :href="href">{{ name }}</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main style="margin-top: 5em">
+      <NuxtPage />
+    </main>
+  </template>
+  <main v-else>
+    <h1>Not Logged In</h1>
+    <div class="login-buttons">
+      <button @click="openInPopup('/auth/github')">Login with GitHub</button>
+    </div>
   </main>
 </template>
 
 <style lang="css" scoped>
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-buttons > button {
+  background-color: black;
+  color: white;
+  font-size: 1.5rem;
+  font-family: inherit;
+}
+
 .top-bar {
   background-color: white;
   border-bottom: 1px solid black;

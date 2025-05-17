@@ -1,15 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   ssr: false,
-  modules: ["@sidebase/nuxt-auth"],
-  auth: {
-    globalAppMiddleware: false,
-    provider: {
-      type: "authjs",
-      defaultProvider: "github",
-      addDefaultCallbackUrl: true,
-    },
-  },
+  modules: ["nuxt-auth-utils"],
 });

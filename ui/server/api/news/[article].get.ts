@@ -1,4 +1,4 @@
-import { mkdir, stat, readFile } from "fs/promises";
+import { mkdir, readFile } from "fs/promises";
 import { DATA_PATH, NEWS_PATH } from "~/server/global";
 
 interface Article {

@@ -1,6 +1,5 @@
 import { mkdir, writeFile, access, constants } from "fs/promises";
-import { getServerSession } from "#auth";
-import { DATA_PATH, NEWS_BACKUP_PATH, NEWS_PATH } from "~/server/global";
+import { DATA_PATH, NEWS_BACKUP_PATH, NEWS_PATH, User } from "~/server/global";
 
 interface Article {
   headline: String;
@@ -26,9 +25,11 @@ export default defineEventHandler(async (event) => {
   let path = `${NEWS_PATH}/${year}-${month}-${day}.txt`;
   let backup_path = `${NEWS_BACKUP_PATH}/${new Date().toISOString()}`;
 
-  let user = (await getServerSession(event))?.user?.name;
+  const { user } = await getUserSession(event);
+  const userData = user as User;
+
   const info = {
-    user: user,
+    user: userData.name,
     time: new Date().toISOString(),
   };
 

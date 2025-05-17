@@ -1,8 +1,7 @@
 import { writeFile, mkdir } from "fs/promises";
 import type { Encoding } from "h3";
 import { readRawBody, getQuery } from "h3";
-import { getServerSession } from "#auth";
-import { ALLOWED_FILES, DATA_PATH } from "~/server/global";
+import { ALLOWED_FILES, DATA_PATH, User } from "~/server/global";
 
 export default defineEventHandler(async (event) => {
   const encoding = (getQuery(event).encoding as Encoding | undefined) || false;
@@ -32,9 +31,12 @@ export default defineEventHandler(async (event) => {
   await writeFile(`${backup_path}/${image_name}`, data);
 
   const info_name = `${name}_info.txt`;
-  const session = await getServerSession(event);
+
+  const { user } = await getUserSession(event);
+  const userData = user as User;
+
   const info = {
-    user: session!.user!.name!,
+    user: userData!.name,
     time: new Date().toISOString(),
   };
 

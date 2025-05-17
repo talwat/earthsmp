@@ -3,21 +3,22 @@ interface User {
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (to.path.startsWith("/api")) {
+  if (
+    to.path.startsWith("/api") ||
+    to.path.startsWith("/auth") ||
+    to.path == "/"
+  ) {
     return;
   }
 
-  const data = useAuth();
-  let session = await data.getSession({
-    required: true,
-  });
+  const { loggedIn, user } = useUserSession();
+  const data = user.value as User | null;
 
-  if (data.status.value !== "authenticated" || !session) {
-    data.signIn(undefined, { callbackUrl: to.path });
+  if (!loggedIn.value) {
+    return navigateTo("/");
   }
 
-  let user = data.data.value?.user as User | undefined;
-  let role = user?.role;
+  let role = data?.role;
 
   if (role) {
     if (role == "admin") {
@@ -32,6 +33,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
       }
     }
   } else {
-    data.signIn(undefined, { callbackUrl: to.path });
+    return navigateTo("/");
   }
 });

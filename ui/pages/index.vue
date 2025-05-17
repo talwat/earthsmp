@@ -1,27 +1,35 @@
 <script setup lang="ts">
 import { PAGES, PAGES_JOURNALIST } from "~/server/global";
 
-const data = useAuth();
-
 export interface User {
   name: string;
   role: string;
 }
 
-let user = data.data.value?.user! as User;
-let pages = user.role == "admin" ? PAGES.reverse() : PAGES_JOURNALIST.reverse();
+const { user, clear } = useUserSession();
+const data = user.value as User | null;
+
+let pages =
+  data?.role == "admin" ? PAGES.reverse() : PAGES_JOURNALIST.reverse();
+
+function logout() {
+  if (confirm("Are you sure you'd like to log out?")) {
+    clear();
+  }
+}
 </script>
 
 <template>
   <h1>
     Welcome,
-    <pre>{{ user.name }}</pre>
+    <pre>{{ data?.name }}</pre>
     .
   </h1>
   <ul>
     <li v-for="[href, name] in pages">
       <a :href="href">{{ name }}</a>
     </li>
+    <button class="logout-btn" @click="logout">Log Out</button>
   </ul>
 </template>
 
@@ -47,9 +55,9 @@ ul {
 li {
   display: block;
   text-align: center;
-  font-size: 3em;
+  font-size: 3rem;
   padding: 0.2em;
-  width: 10em;
+  width: 30rem;
   max-width: 100%;
   box-sizing: border-box;
   background-color: darkslategrey;
@@ -59,5 +67,11 @@ a {
   color: white;
   text-decoration: none;
   display: block;
+}
+
+.logout-btn {
+  font-size: inherit;
+  border: 4px solid lightcoral;
+  font-size: 2rem;
 }
 </style>
