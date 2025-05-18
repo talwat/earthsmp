@@ -1,5 +1,5 @@
 name: EarthSMP
-version: '${project.version}'
+version: '${version}'
 main: dev.talwat.earthsmp.Earthsmp
 api-version: 1.19
 authors: [ talwat ]
