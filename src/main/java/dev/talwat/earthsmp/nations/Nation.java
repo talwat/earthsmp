@@ -40,17 +40,17 @@ public record Nation(@NotNull String tag, @NotNull String name, @NotNull String 
             ruler = UUID.fromString(rawRuler);
         }
 
-        Boolean secondary = false;
+        boolean secondary = false;
         Object rawSecondary = args.get("secondary");
         if (rawSecondary != null) {
-            secondary = (Boolean) rawSecondary;
+            secondary = (boolean) rawSecondary;
         }
 
         return new Nation(
                 (String) args.get("tag"),
                 (String) args.get("name"),
                 (String) args.get("nick"),
-                (int) args.get("color"),
+                (int) (args.get("color") instanceof String ? Integer.parseInt((String) args.get("color")) : args.get("color")),
                 ruler,
                 (String) args.get("flag"),
                 (String) args.get("master"),
