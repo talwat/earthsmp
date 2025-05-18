@@ -1,5 +1,6 @@
 plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.gradleup.shadow") version "8.3.5"
     id("idea")
     java
 }
