@@ -30,7 +30,15 @@ public class News {
 
         HashMap<Date, String> unsorted = new HashMap<>();
         for (File file : fileList) {
+            if (!file.isFile()) {
+                continue;
+            }
+
             int dotIdx = file.getName().lastIndexOf('.') + 1;
+
+            if (dotIdx < 1) {
+                continue;
+            }
 
             String extension = file.getName().substring(dotIdx);
             String raw = file.getName().substring(0, dotIdx - 1);
