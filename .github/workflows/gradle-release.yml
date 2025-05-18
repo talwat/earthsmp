@@ -30,4 +30,4 @@ jobs:
       shell: bash
       run: |
         rm -rf ./build/libs/*-all.jar
-        gh release upload ${{github.event.release.tag_name}} ./build/libs/earthsmp-*.jar.jar
+        gh release upload ${{github.event.release.tag_name}} ./build/libs/earthsmp-*.jar
