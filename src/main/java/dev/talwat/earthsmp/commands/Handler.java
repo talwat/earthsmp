@@ -20,7 +20,7 @@ public final class Handler implements CommandExecutor {
             return null;
         }
 
-        if (sender.isOp()) {
+        if (sender.isOp() || sender.hasPermission("earthsmp.admin")) {
             switch (args[0]) {
                 case "reload":
                     return new Reload(plugin);

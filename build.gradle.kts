@@ -46,4 +46,4 @@ tasks.runServer {
 }
 
 group = "dev.talwat"
-version = "1.5.0-SNAPSHOT"
+version = "1.5.1-SNAPSHOT"
