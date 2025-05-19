@@ -178,7 +178,7 @@ public class EventListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         event.getPlayer().playerListName(plugin.borders.formatUsername(event.getPlayer(), null));
-        event.getPlayer().sendPlayerListHeader(Component.text("Talwat's Earth SMP!\nPlugin Version:").appendSpace().append(Component.text(plugin.getPluginMeta().getVersion(), plugin.accent)));
+        event.getPlayer().sendPlayerListHeader(Component.text("EarthSMP!\nPlugin Version:").appendSpace().append(Component.text(plugin.getPluginMeta().getVersion(), plugin.accent)));
         event.getPlayer().setScoreboard(plugin.borders.scoreboard);
 
         Nation nation = plugin.borders.getFromCache(event.getPlayer());
