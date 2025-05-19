@@ -8,7 +8,7 @@ public record Territory(String tag, String name, int saturation, boolean colony)
         return new Territory(
                 (String) args.get("tag"),
                 (String) args.get("name"),
-                (int) args.get("color"),
+                (int) (args.get("color") instanceof String ? Integer.parseInt((String) args.get("color")) : args.get("color")),
                 (boolean) args.get("colony")
         );
     }
