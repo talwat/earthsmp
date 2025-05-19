@@ -317,7 +317,7 @@ function memberBlur(nation: Nation, i: number) {
                           nation.territories = [];
                         }
 
-                        nation.territories.push({ color: 0 } as Territory);
+                        nation.territories.push({ color: 0, colony: false } as Territory);
                       }
                     "
                   >
