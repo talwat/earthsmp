@@ -1,6 +1,7 @@
 name: Release Build
 
 on:
+  push:
   release:
     types: [created]
 
@@ -24,10 +25,19 @@ jobs:
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: |
+        ./gradlew build
+        rm -rf ./build/libs/*-all.jar
 
     - name: Upload assets to release
+      if: github.event_name == 'release'
       shell: bash
       run: |
-        rm -rf ./build/libs/*-all.jar
         gh release upload ${{github.event.release.tag_name}} ./build/libs/earthsmp-*.jar
+
+    - name: Upload build artifact
+      if: github.event_name == 'release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: jar
+        path: ./build/libs/earthsmp-*.jar
