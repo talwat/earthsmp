@@ -2,8 +2,9 @@
 
 This is the plugin used for Talwat's EarthSMP as a replacement for Towny, and several other plugins.
 
-Currently, it's only compatible with paper on minecraft version 1.19.4.
-It also requires the server have squaremap installed, as it uses it to display borders.
+Currently, it's only compatible with [paper](https://papermc.io/)
+on Minecraft version 1.19.4.
+It also requires the server have [squaremap](https://github.com/jpenilla/squaremap) installed, as it uses it to display borders.
 
 ## Features
 
@@ -38,9 +39,10 @@ layer of "realism" by players having to set up these systems themselves.
 
 ### Accessible to everyone
 
-#### `/earth accept`
+#### `/earth accept <tag>`
 
-Accept a nation invite.
+Accept a nation invite. You need to include the tag of the nation you want to join.
+This is to prevent people from joining nations they don't want to join.
 
 #### `/earth decline`
 
