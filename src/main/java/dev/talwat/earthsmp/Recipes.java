@@ -168,7 +168,7 @@ public class Recipes {
     }
 
     public static void stonebricks() {
-        ItemStack result = new ItemStack(Material.STONE_BRICKS, 18);
+        ItemStack result = new ItemStack(Material.STONE_BRICKS, 36);
         ShapedRecipe stonebricks = new ShapedRecipe(new NamespacedKey(plugin, "stonebricks"), result);
 
         stonebricks.shape("SSS", "SBS", "SSS");
