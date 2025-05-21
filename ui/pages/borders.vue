@@ -32,6 +32,11 @@ onMounted(() => {
 
   viewer.show();
 });
+
+// Refresh every 30 seconds.
+setInterval(async () => {
+  viewer.update();
+}, 30000);
 </script>
 
 <template>

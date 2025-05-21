@@ -55,6 +55,13 @@ async function content(): Promise<Nations> {
   return parsed;
 }
 
+// Refresh every 30 seconds.
+setInterval(async () => {
+  if (changed.value == false) {
+    nations.value = await content();
+  }
+}, 30000);
+
 async function upload() {
   const required = ["tag", "nick", "name", "color"];
   for (const nation of nations.value.nations) {
@@ -317,7 +324,10 @@ function memberBlur(nation: Nation, i: number) {
                           nation.territories = [];
                         }
 
-                        nation.territories.push({ color: 0, colony: false } as Territory);
+                        nation.territories.push({
+                          color: 0,
+                          colony: false,
+                        } as Territory);
                       }
                     "
                   >
