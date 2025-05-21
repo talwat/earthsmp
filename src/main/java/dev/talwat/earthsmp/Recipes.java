@@ -266,7 +266,7 @@ public class Recipes {
     }
 
     public static void netherRack() {
-        ItemStack result = new ItemStack(Material.NETHERRACK, 1);
+        ItemStack result = new ItemStack(Material.NETHERRACK, 8);
         ShapedRecipe netherRack = new ShapedRecipe(new NamespacedKey(plugin, "netherrack"), result);
 
         netherRack.shape("DDD", "DRD", "DDD");

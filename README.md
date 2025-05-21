@@ -10,7 +10,7 @@ It also requires the server have [squaremap](https://github.com/jpenilla/squarem
 
 * Borders, defined by an image file (`borders.png`) rather than arbitrary chunks.
 
-* Custom recipes, designed to add alternative ways of accessing key items,
+* [Custom recipes](RECIPES.md), designed to add alternative ways of accessing key items,
 or making certain building blocks cheaper to encourage larger cities and builds.
 
 * Grief protection, similar to Towny, where claimed chunks can only be interacted with by
