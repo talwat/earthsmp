@@ -14,7 +14,8 @@ public class Recipes {
     public static void register(Earthsmp plugin) {
         Recipes.plugin = plugin;
 
-        rails();
+        poweredRails();
+        rail();
         saddle();
         rootedDirt();
         shulker();
@@ -37,14 +38,25 @@ public class Recipes {
         netherRack();
     }
 
-    public static void rails() {
-        ItemStack result = new ItemStack(Material.POWERED_RAIL, 16);
-        ShapedRecipe rails = new ShapedRecipe(new NamespacedKey(plugin, "rails"), result);
+    public static void poweredRails() {
+        ItemStack result = new ItemStack(Material.POWERED_RAIL, 24);
+        ShapedRecipe rails = new ShapedRecipe(new NamespacedKey(plugin, "poweredrails"), result);
 
         rails.shape("G G", "GSG", "GRG");
         rails.setIngredient('S', Material.STICK);
         rails.setIngredient('R', Material.REDSTONE);
         rails.setIngredient('G', Material.GOLD_INGOT);
+
+        getServer().addRecipe(rails);
+    }
+
+    public static void rail() {
+        ItemStack result = new ItemStack(Material.RAIL, 64);
+        ShapedRecipe rails = new ShapedRecipe(new NamespacedKey(plugin, "rail"), result);
+
+        rails.shape("I I", "ISI", "I I");
+        rails.setIngredient('S', Material.STICK);
+        rails.setIngredient('I', Material.IRON_INGOT);
 
         getServer().addRecipe(rails);
     }
