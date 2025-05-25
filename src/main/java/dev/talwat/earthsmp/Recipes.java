@@ -190,13 +190,14 @@ public class Recipes {
     }
 
     public static void blaze() {
-        ItemStack result = new ItemStack(Material.BLAZE_ROD, 2);
+        ItemStack result = new ItemStack(Material.BLAZE_ROD, 1);
         ShapedRecipe blaze = new ShapedRecipe(new NamespacedKey(plugin, "blaze"), result);
 
-        blaze.shape("G", "S", "C");
+        blaze.shape("G", "FSF", "C");
         blaze.setIngredient('C', Material.COAL);
         blaze.setIngredient('S', Material.STICK);
         blaze.setIngredient('G', Material.GUNPOWDER);
+        blaze.setIngredient('F', Material.GOLD_INGOT);
 
         getServer().addRecipe(blaze);
     }
@@ -256,9 +257,11 @@ public class Recipes {
     }
 
     public static void netherWart() {
-        ItemStack result = new ItemStack(Material.NETHER_WART, 4);
+        ItemStack result = new ItemStack(Material.NETHER_WART, 2);
         ShapelessRecipe netherWart = new ShapelessRecipe(new NamespacedKey(plugin, "netherwart"), result);
 
+        netherWart.addIngredient(Material.DIAMOND);
+        netherWart.addIngredient(Material.DIAMOND);
         netherWart.addIngredient(Material.DIAMOND);
         netherWart.addIngredient(Material.REDSTONE);
 

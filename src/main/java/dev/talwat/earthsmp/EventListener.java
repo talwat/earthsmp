@@ -32,18 +32,24 @@ public class EventListener implements Listener {
     }
 
     private boolean isAllowed(Location pos, Player player) {
-        Nation nation = plugin.borders.get(pos);
+        if (player == null) {
+            return false;
+        }
 
-        if (nation == null || (player != null && nation.members().contains(player.getUniqueId()))) {
+        if (player.hasPermission("earthsmp.bypass")) {
             return true;
         }
 
-        if (player != null) {
-            player.sendActionBar(
-                    Component.text("You aren't allowed to do this in ")
-                            .append(Component.text(nation.nick(), nation.textColor())
-                                    .append(Component.text("!", NamedTextColor.WHITE))));
+        Nation nation = plugin.borders.get(pos);
+
+        if (nation == null || nation.members().contains(player.getUniqueId())) {
+            return true;
         }
+
+        player.sendActionBar(
+                Component.text("You aren't allowed to do this in ")
+                        .append(Component.text(nation.nick(), nation.textColor())
+                                .append(Component.text("!", NamedTextColor.WHITE))));
 
         return false;
     }
