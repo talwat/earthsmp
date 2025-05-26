@@ -6,6 +6,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
@@ -37,6 +38,10 @@ public class EventListener implements Listener {
         }
 
         if (player.hasPermission("earthsmp.bypass")) {
+            return true;
+        }
+
+        if (!pos.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
             return true;
         }
 
@@ -121,12 +126,18 @@ public class EventListener implements Listener {
             return;
         }
 
-        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) {
+        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.PHYSICAL) {
             return;
         }
 
         Block interacted = event.getClickedBlock();
         if (interacted == null) {
+            return;
+        }
+
+        Location pos = interacted.getLocation();
+
+        if (isAllowed(pos, event.getPlayer())) {
             return;
         }
 
@@ -151,13 +162,15 @@ public class EventListener implements Listener {
                 if (event.getItem().getType().isAir()) {
                     return;
                 }
+
+                if (event.getItem().getType().name().toLowerCase().contains("potion")) {
+                    return;
+                }
+
+                if (event.getItem().getType().equals(Material.ENDER_PEARL)) {
+                    return;
+                }
             }
-        }
-
-        Location pos = interacted.getLocation();
-
-        if (isAllowed(pos, event.getPlayer())) {
-            return;
         }
 
         event.setCancelled(true);
