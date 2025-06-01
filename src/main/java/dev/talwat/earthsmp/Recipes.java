@@ -193,7 +193,7 @@ public class Recipes {
         ItemStack result = new ItemStack(Material.BLAZE_ROD, 1);
         ShapedRecipe blaze = new ShapedRecipe(new NamespacedKey(plugin, "blaze"), result);
 
-        blaze.shape("G", "FSF", "C");
+        blaze.shape(" G ", "FSF", " C ");
         blaze.setIngredient('C', Material.COAL);
         blaze.setIngredient('S', Material.STICK);
         blaze.setIngredient('G', Material.GUNPOWDER);
