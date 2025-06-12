@@ -70,18 +70,7 @@ public class EventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageEvent event) {
-        if (event.getEntity().getType() == EntityType.VILLAGER) {
-            if (event.getCause() == EntityDamageEvent.DamageCause.LAVA) {
-                return;
-            }
-
-            if (event.getCause() == EntityDamageEvent.DamageCause.FIRE) {
-                return;
-            }
-
-            if (event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
-                return;
-            }
+        if (event.getEntity().getType() == EntityType.VILLAGER && !event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
             event.setCancelled(true);
         }
     }
